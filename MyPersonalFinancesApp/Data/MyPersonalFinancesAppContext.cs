@@ -3,9 +3,9 @@ using MyPersonalFinancesApp.Models;
 
 namespace MyPersonalFinancesApp.Data
 {
-    public class PersonalFinanceAppContext : DbContext
+    public class MyPersonalFinancesAppContext : DbContext
     {
-        public PersonalFinanceAppContext(DbContextOptions<PersonalFinanceAppContext> options):base(options) { }
+        public MyPersonalFinancesAppContext(DbContextOptions<MyPersonalFinancesAppContext> options):base(options) { }
 
         DbSet<Expence> Expences { get; set; }
     }
