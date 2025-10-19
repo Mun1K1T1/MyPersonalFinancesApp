@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MyPersonalFinancesApp.Data;
+using MyPersonalFinancesApp.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MyPersonalFinancesAppContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 
-
+builder.Services.AddScoped<IExpensesService, ExpensesService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

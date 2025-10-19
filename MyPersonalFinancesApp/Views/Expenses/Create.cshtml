@@ -1,0 +1,28 @@
+﻿@model MyPersonalFinancesApp.Models.Expense
+
+<div class="container">
+    <h2> Add Expense</h2>
+    <form asp-action="Create" method="post">
+        <div>
+            <label asp-for="Amount" class="form-label"></label>
+            <input asp-for="Amount" class="form-control"/>
+        </div>
+        <div>
+            <label asp-for="BalanceId" class="form-label"></label>
+            <input asp-for="BalanceId" class="form-control" />
+        </div>
+        <div>
+            <label asp-for="CategoryId" class="form-label"></label>
+            <input asp-for="CategoryId" class="form-control" />
+        </div>
+        <div>
+            <label asp-for="Tag" class="form-label"></label>
+            <input asp-for="Tag" class="form-control" />
+        </div>
+        <div>
+            <label asp-for="Description" class="form-label"></label>
+            <input asp-for="Description" class="form-control"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Expense</button>
+    </form>
+</div>
