@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MyPersonalFinancesApp.Migrations
+namespace FinanceManager.Migrations
 {
     /// <inheritdoc />
     public partial class pastformattingone : Migration

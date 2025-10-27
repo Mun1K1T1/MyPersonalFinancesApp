@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace MyPersonalFinancesApp.Migrations
+namespace FinanceManager.Migrations
 {
     /// <inheritdoc />
     public partial class renamingfolders : Migration

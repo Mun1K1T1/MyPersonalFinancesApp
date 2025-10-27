@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MyPersonalFinancesApp.Data;
+using FinanceManager.Data;
 
 #nullable disable
 
-namespace MyPersonalFinancesApp.Migrations
+namespace FinanceManager.Migrations
 {
-    [DbContext(typeof(MyPersonalFinancesAppContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20251009085936_initial migration")]
     partial class initialmigration
     {

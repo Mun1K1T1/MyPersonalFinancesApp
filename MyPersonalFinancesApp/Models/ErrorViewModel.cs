@@ -1,4 +1,4 @@
-namespace MyPersonalFinancesApp.Models
+﻿namespace FinanceManager.Models
 {
     public class ErrorViewModel
     {

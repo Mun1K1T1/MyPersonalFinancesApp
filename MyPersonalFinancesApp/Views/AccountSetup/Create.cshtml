@@ -1,0 +1,39 @@
+﻿@model FinanceManager.Models.CreateAccountViewModel
+@{
+    ViewData["Title"] = "Create Your First Account";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h1 class="text-center">@ViewData["Title"]</h1>
+        <h4 class="text-center text-muted">You're almost there! Let's set up your first financial account.</h4>
+        <hr />
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Name" class="form-control" placeholder="e.g., Main Bank Account" />
+                <label asp-for="Name"></label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="InitialBalance" class="form-control" value="0" />
+                <label asp-for="InitialBalance"></label>
+                <span asp-validation-for="InitialBalance" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <select asp-for="Currency" asp-items="Html.GetEnumSelectList<Currency>()" class="form-select">
+                    <option selected disabled>Select a currency...</option>
+                </select>
+                <label asp-for="Currency"></label>
+                <span asp-validation-for="Currency" class="text-danger"></span>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Finish Setup</button>
+            </div>
+        </form>
+    </div>
+</div>
