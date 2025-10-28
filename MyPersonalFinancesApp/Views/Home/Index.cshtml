@@ -1,31 +1,185 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model FinanceManager.Models.DashboardViewModel
+@using System.Text.Json;
+@{
+    ViewData["Title"] = "Dashboard";
+    var expenseChartData = JsonSerializer.Serialize(Model.ExpenseChartData);
+    var incomeChartData = JsonSerializer.Serialize(Model.IncomeChartData);
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to FinanceManager</h1>
-    <p>Your personal finance tracking application.</p>
+<!-- Account Filter Dropdown -->
+<div class="row justify-content-center mb-4">
+    <div class="col-md-4">
+        <!-- REMOVE the onchange attribute from the form tag -->
+        <form asp-action="Index" method="get" id="accountFilterForm">
+            <div class="input-group">
+                <label class="input-group-text" for="accountIdSelect">Account:</label>
+                <!-- REMOVE the onchange attribute from the select tag as well -->
+                <select asp-for="SelectedAccountId" asp-items="@Model.Accounts" class="form-select" id="accountIdSelect">
+                    <option value="">General (All Accounts)</option>
+
+                    <!-- ADD THESE TWO LINES -->
+                    <option disabled>------------------</option>
+                    <option value="create_new">+ New Account</option>
+                </select>
+            </div>
+        </form>
+    </div>
 </div>
 
-<!-- This is where we will later add logic to show the dashboard -->
-<!-- For example: -->
-<!--
-@if (User.Identity.IsAuthenticated)
-{
-        <h2>Your Dashboard</h2>
-        <div class="row">
-            <div class="col-md-6">
+<div class="row">
+    <!-- WEST SIDE: Expenses -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header text-center">
                 <h3>Expenses</h3>
+            </div>
+            <div class="card-body">
                 <div class="pie-chart-container">
                     <canvas id="expenseChart"></canvas>
+                    @if (!Model.ExpenseChartData.Values.Any())
+                    {
+                        <a asp-controller="Transaction" asp-action="Create" asp-route-type="Expense" class="create-transaction-btn">+</a>
+                    }
                 </div>
-            </div>
-            <div class="col-md-6">
-                <h3>Income</h3>
-                <div class="pie-chart-container">
-                    <canvas id="incomeChart"></canvas>
-                </div>
+                <hr />
+                <h5 class="mt-4">Recent Expenses</h5>
+                @if (Model.RecentExpenses.Any())
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var expense in Model.RecentExpenses)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>@expense.Category.Name</strong>
+                                    <small class="d-block text-muted">@expense.Date.ToShortDateString()</small>
+                                </div>
+                                <span class="badge bg-danger rounded-pill">-@expense.Amount.ToString("C")</span>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-center text-muted">No recent expenses found.</p>
+                }
             </div>
         </div>
+    </div>
+
+    <!-- EAST SIDE: Income -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3>Income</h3>
+            </div>
+            <div class="card-body">
+                <div class="pie-chart-container">
+                    <canvas id="incomeChart"></canvas>
+                    @if (!Model.IncomeChartData.Values.Any())
+                    {
+                        <a asp-controller="Transaction" asp-action="Create" asp-route-type="Income" class="create-transaction-btn">+</a>
+                    }
+                </div>
+                <hr />
+                <h5 class="mt-4">Recent Income</h5>
+                @if (Model.RecentIncomes.Any())
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var income in Model.RecentIncomes)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>@income.Category.Name</strong>
+                                    <small class="d-block text-muted">@income.Date.ToShortDateString()</small>
+                                </div>
+                                <span class="badge bg-success rounded-pill">+@income.Amount.ToString("C")</span>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-center text-muted">No recent income found.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function createPlaceholderChart(canvasId) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['No Data'],
+                    datasets: [{
+                        data: [1],
+                        backgroundColor: ['#E9ECEF'], // A light grey color
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: { enabled: false }, // Disable tooltips for placeholder
+                        legend: { display: false } // Hide legend for placeholder
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function () {
+            const accountSelect = document.getElementById('accountIdSelect');
+            if (accountSelect) {
+                accountSelect.addEventListener('change', function () {
+                    if (this.value === 'create_new') {
+                        // If user selects "New Account", redirect them
+                        window.location.href = '@Url.Action("Create", "AccountSetup")';
+                    } else {
+                        // Otherwise, submit the form to filter the dashboard
+                        document.getElementById('accountFilterForm').submit();
+                    }
+                });
+            }
+
+            // --- Expense Chart ---
+            const expenseData = JSON.parse('@Html.Raw(expenseChartData)');
+            if (expenseData.Values.length > 0) {
+                const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+                new Chart(expenseCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: expenseData.Labels,
+                        datasets: [{
+                            data: expenseData.Values,
+                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+                        }]
+                    }
+                });
+            } else {
+                createPlaceholderChart('expenseChart');
+            }
+
+            // --- Income Chart ---
+            const incomeData = JSON.parse('@Html.Raw(incomeChartData)');
+            if (incomeData.Values.length > 0) {
+                const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+                new Chart(incomeCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: incomeData.Labels,
+                        datasets: [{
+                            data: incomeData.Values,
+                            backgroundColor: ['#4BC0C0', '#9966FF', '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56'],
+                        }]
+                    }
+                });
+            } else {
+                createPlaceholderChart('incomeChart');
+            }
+        });
+    </script>
 }
--->

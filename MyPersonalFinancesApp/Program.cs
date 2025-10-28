@@ -35,7 +35,8 @@ app.Run();*/
 using Microsoft.AspNetCore.Identity; // <-- ADD THIS using statement
 using Microsoft.EntityFrameworkCore;
 using FinanceManager.Data;
-using FinanceManager.Models; // <-- ADD THIS using statement
+using FinanceManager.Models;
+using FinanceManager.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,7 +59,11 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 
 // --- END: ADDED IDENTITY CONFIGURATION ---
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    // This line registers our filter to be used on every controller action
+    options.Filters.Add<EnsureUserHasAccountFilter>();
+});
 
 var app = builder.Build();
 

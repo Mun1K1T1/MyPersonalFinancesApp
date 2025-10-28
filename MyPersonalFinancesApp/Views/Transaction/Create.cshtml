@@ -1,0 +1,97 @@
+﻿@model FinanceManager.Models.TransactionCreateViewModel
+@{
+    ViewData["Title"] = $"Create {Model.TransactionType}";
+}
+
+<div class="mb-3">
+    <a href="javascript:history.back()" class="btn btn-link text-secondary text-decoration-none">
+        &lt; Back
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1 class="text-center">@ViewData["Title"]</h1>
+        <h4 class="text-center text-muted">Log your new @Model.TransactionType.ToLower()</h4>
+        <hr />
+
+        <form asp-action="Create" id="transaction-form">
+            <!-- Hidden field to ensure the TransactionType is sent on POST -->
+            <input type="hidden" asp-for="TransactionType" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Transaction Type Switch is now REMOVED -->
+
+            <div class="row">
+                <!-- Amount -->
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input asp-for="Amount" class="form-control" placeholder="0.00" />
+                        <label asp-for="Amount"></label>
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+                </div>
+                <!-- Date -->
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input asp-for="Date" class="form-control" type="datetime-local" />
+                        <label asp-for="Date"></label>
+                        <span asp-validation-for="Date" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account -->
+            <div class="form-floating mb-3">
+                <select asp-for="AccountId" asp-items="Model.Accounts" class="form-select">
+                    <option selected disabled>-- Select Account --</option>
+                </select>
+                <label asp-for="AccountId"></label>
+                <span asp-validation-for="AccountId" class="text-danger"></span>
+            </div>
+
+            <!-- Categories (Now conditional) -->
+            @if (Model.TransactionType == "Expense")
+            {
+                <div class="form-floating mb-3">
+                    <select asp-for="CategoryId" asp-items="Model.ExpenseCategories" class="form-select">
+                        <option selected disabled>-- Select Category --</option>
+                    </select>
+                    <label asp-for="CategoryId">Expense Category</label>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <div class="form-floating mb-3">
+                    <select asp-for="CategoryId" asp-items="Model.IncomeCategories" class="form-select">
+                        <option selected disabled>-- Select Category --</option>
+                    </select>
+                    <label asp-for="CategoryId">Income Category</label>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+            }
+
+            <!-- Tags -->
+            <div class="form-floating mb-3">
+                <input asp-for="Tags" class="form-control" placeholder="e.g., groceries, urgent, project-alpha" />
+                <label asp-for="Tags"></label>
+            </div>
+
+            <!-- Comment -->
+            <div class="form-floating mb-3">
+                <textarea asp-for="Comment" class="form-control" style="height: 100px" placeholder="Add a comment..."></textarea>
+                <label asp-for="Comment"></label>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Save Transaction</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
