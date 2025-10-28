@@ -14,10 +14,18 @@
             <div class="input-group">
                 <label class="input-group-text" for="accountIdSelect">Account:</label>
                 <!-- REMOVE the onchange attribute from the select tag as well -->
-                <select asp-for="SelectedAccountId" asp-items="@Model.Accounts" class="form-select" id="accountIdSelect">
+                <select asp-for="SelectedAccountId" class="form-select" id="accountIdSelect">
                     <option value="">General (All Accounts)</option>
 
-                    <!-- ADD THESE TWO LINES -->
+                    <!-- Loop through user's accounts -->
+                    @foreach (var account in Model.Accounts)
+                    {
+                        <option value="@account.Value" selected="@(Model.SelectedAccountId.ToString() == account.Value)">
+                            @account.Text
+                        </option>
+                    }
+
+                    <!-- Add the separator and New Account at the end -->
                     <option disabled>------------------</option>
                     <option value="create_new">+ New Account</option>
                 </select>
@@ -146,7 +154,8 @@
             }
 
             // --- Expense Chart ---
-            const expenseData = JSON.parse('@Html.Raw(expenseChartData)');
+            // The JSON is now directly assigned, not parsed from a string
+            const expenseData = @Html.Raw(expenseChartData);
             if (expenseData.Values.length > 0) {
                 const expenseCtx = document.getElementById('expenseChart').getContext('2d');
                 new Chart(expenseCtx, {
@@ -164,7 +173,8 @@
             }
 
             // --- Income Chart ---
-            const incomeData = JSON.parse('@Html.Raw(incomeChartData)');
+            // The JSON is now directly assigned, not parsed from a string
+            const incomeData = @Html.Raw(incomeChartData);
             if (incomeData.Values.length > 0) {
                 const incomeCtx = document.getElementById('incomeChart').getContext('2d');
                 new Chart(incomeCtx, {

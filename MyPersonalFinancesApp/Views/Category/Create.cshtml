@@ -1,0 +1,29 @@
+﻿@model FinanceManager.Models.CategoryCreateViewModel
+@{
+    ViewData["Title"] = "Create New Category";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h1>@ViewData["Title"]</h1>
+        <hr />
+        <form asp-action="Create">
+            <input type="hidden" asp-for="Type" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Name" class="form-control" placeholder="Category Name" />
+                <label asp-for="Name"></label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Color" class="form-label"></label>
+                <input asp-for="Color" type="color" class="form-control form-control-color" />
+                <span asp-validation-for="Color" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Category</button>
+        </form>
+    </div>
+</div>

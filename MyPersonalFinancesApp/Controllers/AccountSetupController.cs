@@ -3,6 +3,7 @@ using FinanceManager.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.CodeAnalysis.Options;
 using Newtonsoft.Json.Linq;
 using System;
@@ -48,6 +49,27 @@ namespace FinanceManager.Controllers
 
                 _context.Accounts.Add(account);
                 await _context.SaveChangesAsync();
+
+                // If the initial balance is greater than 0, create a corresponding income transaction.
+                if (model.InitialBalance > 0)
+                {
+                    var initialBalanceCategory = await _context.Categories
+                        .FirstOrDefaultAsync(c => c.ApplicationUserId == userId && c.Name == "Initial Balance");
+
+                    if (initialBalanceCategory != null)
+                    {
+                        var initialIncome = new Income
+                        {
+                            Amount = model.InitialBalance,
+                            Date = DateTime.Now,
+                            Comment = "Initial account balance.",
+                            AccountId = account.Id,
+                            CategoryId = initialBalanceCategory.Id
+                        };
+                        _context.Transactions.Add(initialIncome);
+                        await _context.SaveChangesAsync(); // Save the new transaction
+                    }
+                }
 
                 return RedirectToAction("Index", "Home");
             }

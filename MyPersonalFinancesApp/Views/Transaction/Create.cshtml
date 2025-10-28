@@ -55,8 +55,9 @@
             @if (Model.TransactionType == "Expense")
             {
                 <div class="form-floating mb-3">
-                    <select asp-for="CategoryId" asp-items="Model.ExpenseCategories" class="form-select">
+                    <select asp-for="CategoryId" asp-items="Model.ExpenseCategories" class="form-select category-select">
                         <option selected disabled>-- Select Category --</option>
+                        <option value="create_new_category">+ Add your own</option>
                     </select>
                     <label asp-for="CategoryId">Expense Category</label>
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
@@ -65,8 +66,9 @@
             else
             {
                 <div class="form-floating mb-3">
-                    <select asp-for="CategoryId" asp-items="Model.IncomeCategories" class="form-select">
+                    <select asp-for="CategoryId" asp-items="Model.IncomeCategories" class="form-select category-select">
                         <option selected disabled>-- Select Category --</option>
+                        <option value="create_new_category">+ Add your own</option>
                     </select>
                     <label asp-for="CategoryId">Income Category</label>
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
@@ -94,4 +96,19 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <!-- ADD THIS SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.category-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    if (this.value === 'create_new_category') {
+                        // Redirect to the category creation page with the correct type
+                        const transactionType = document.getElementById('TransactionType').value;
+                        window.location.href = `/Category/Create?type=${transactionType}`;
+                    }
+                });
+            });
+        });
+    </script>
 }

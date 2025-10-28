@@ -21,6 +21,10 @@ namespace FinanceManager.Models
         public CategoryType Type { get; set; }
 
         [Required]
+        [StringLength(7)] 
+        public string Color { get; set; } = "#808080"; // Default to grey
+
+        [Required]
         public string ApplicationUserId { get; set; }
         public virtual ApplicationUser ApplicationUser { get; set; }
     }
