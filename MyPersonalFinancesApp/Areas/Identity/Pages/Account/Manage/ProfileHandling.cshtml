@@ -1,0 +1,27 @@
+﻿@page
+@model ProfileHandlingModel
+@{
+    ViewData["Title"] = "Profile Handling";
+}
+
+<!-- Back Button -->
+<div class="mb-3">
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; Back to Dashboard</a>
+</div>
+
+<h3>@ViewData["Title"]</h3>
+<p class="text-muted">Manage your account session and data.</p>
+
+<div class="list-group">
+    <div class="list-group-item">
+        <h5 class="mb-1">Log Out</h5>
+        <p class="mb-1">End your current session on this device.</p>
+        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+            <button type="submit" class="btn btn-outline-primary mt-2">Logout</button>
+        </form>
+    </div>
+    <a asp-page="./PersonalData" class="list-group-item list-group-item-action list-group-item-danger">
+        <h5 class="mb-1">Delete Account</h5>
+        <p class="mb-1">Permanently delete your account and all associated data.</p>
+    </a>
+</div>

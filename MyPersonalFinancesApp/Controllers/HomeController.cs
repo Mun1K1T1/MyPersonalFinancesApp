@@ -38,7 +38,7 @@ namespace FinanceManager.Controllers
                 Accounts = new SelectList(userAccounts, "Id", "Name", accountId)
             };
 
-            // Base query for transactions for the current user
+            //Transactions for the current user
             var transactionsQuery = _context.Transactions.Where(t => t.Account.ApplicationUserId == userId);
 
             // If a specific account is selected, filter by it
@@ -62,23 +62,37 @@ namespace FinanceManager.Controllers
 
             // Prepare Expense Chart Data
             var expenseData = await transactionsQuery.OfType<Expense>()
-                .GroupBy(e => e.Category.Name)
-                .Select(group => new { Category = group.Key, Total = group.Sum(e => e.Amount) })
+                .Include(e => e.Category)
+                .GroupBy(e => new { e.Category.Name, e.Category.Color }) // Group by Color
+                .Select(group => new
+                {
+                    Category = group.Key.Name,
+                    Color = group.Key.Color,
+                    Total = group.Sum(e => e.Amount)
+                })
                 .OrderByDescending(x => x.Total)
                 .ToListAsync();
 
             viewModel.ExpenseChartData.Labels = expenseData.Select(x => x.Category).ToList();
             viewModel.ExpenseChartData.Values = expenseData.Select(x => x.Total).ToList();
+            viewModel.ExpenseChartData.Colors = expenseData.Select(x => x.Color).ToList();
 
             // Prepare Income Chart Data
             var incomeData = await transactionsQuery.OfType<Income>()
-                .GroupBy(i => i.Category.Name)
-                .Select(group => new { Category = group.Key, Total = group.Sum(i => i.Amount) })
+                .Include(i => i.Category)
+                .GroupBy(i => new { i.Category.Name, i.Category.Color }) // Group by Color
+                .Select(group => new
+                {
+                    Category = group.Key.Name,
+                    Color = group.Key.Color,
+                    Total = group.Sum(i => i.Amount)
+                })
                 .OrderByDescending(x => x.Total)
                 .ToListAsync();
 
             viewModel.IncomeChartData.Labels = incomeData.Select(x => x.Category).ToList();
             viewModel.IncomeChartData.Values = incomeData.Select(x => x.Total).ToList();
+            viewModel.IncomeChartData.Colors = incomeData.Select(x => x.Color).ToList();
 
             return View(viewModel);
         }

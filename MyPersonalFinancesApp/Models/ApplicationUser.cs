@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FinanceManager.Models
 {
@@ -15,6 +15,16 @@ namespace FinanceManager.Models
 
         [PersonalData]
         public string? Patronymic { get; set; }
+
+        [NotMapped]
+        public string FullName
+        {
+            get
+            {
+                // Joins the names
+                return string.Join(" ", new[] { FirstName, LastName, Patronymic }.Where(s => !string.IsNullOrEmpty(s)));
+            }
+        }
 
         public string? AvatarPath { get; set; }
 

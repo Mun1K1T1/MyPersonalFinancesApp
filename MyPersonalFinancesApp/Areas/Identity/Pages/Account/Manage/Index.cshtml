@@ -5,21 +5,38 @@
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
+<!-- Back Button -->
+<div class="mb-3">
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; Back to Dashboard</a>
+</div>
+
 <h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
 <div class="row">
     <div class="col-md-6">
         <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
+                <input asp-for="Username" class="form-control" disabled />
                 <label asp-for="Username" class="form-label"></label>
             </div>
+
+            <hr />
+            <h5>Personal Information</h5>
+
             <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                <input asp-for="Input.FirstName" class="form-control" />
+                <label asp-for="Input.FirstName" class="form-label"></label>
             </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.LastName" class="form-control" />
+                <label asp-for="Input.LastName" class="form-label"></label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Patronymic" class="form-control" />
+                <label asp-for="Input.Patronymic" class="form-label"></label>
+            </div>
+
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>
     </div>

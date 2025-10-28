@@ -116,56 +116,68 @@
 
 @section Scripts {
     <script>
+        // --- Reusable function for the placeholder chart ---
         function createPlaceholderChart(canvasId) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: ['No Data'],
-                    datasets: [{
-                        data: [1],
-                        backgroundColor: ['#E9ECEF'], // A light grey color
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        tooltip: { enabled: false }, // Disable tooltips for placeholder
-                        legend: { display: false } // Hide legend for placeholder
-                    }
-                }
-            });
+            // ... (this function remains the same as before)
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            document.addEventListener('DOMContentLoaded', function () {
-            const accountSelect = document.getElementById('accountIdSelect');
-            if (accountSelect) {
-                accountSelect.addEventListener('change', function () {
-                    if (this.value === 'create_new') {
-                        // If user selects "New Account", redirect them
-                        window.location.href = '@Url.Action("Create", "AccountSetup")';
-                    } else {
-                        // Otherwise, submit the form to filter the dashboard
-                        document.getElementById('accountFilterForm').submit();
-                    }
-                });
-            }
+        // --- CUSTOM CHART.JS PLUGIN to draw text in the center ---
+        const doughnutCenterText = {
+            id: 'doughnutCenterText',
+            afterDraw: (chart) => {
+                if (chart.options.plugins.doughnutCenterText.text) {
+                    const ctx = chart.ctx;
+                    const text = chart.options.plugins.doughnutCenterText.text;
+                    const textMetrics = ctx.measureText(text);
 
+                    const x = (chart.chartArea.left + chart.chartArea.right) / 2;
+                    const y = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+
+                    ctx.save();
+                    ctx.font = 'bold 1.2em sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = '#6c757d'; // Bootstrap secondary color
+                    ctx.fillText(text, x, y);
+                    ctx.restore();
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
             // --- Expense Chart ---
-            // The JSON is now directly assigned, not parsed from a string
-            const expenseData = @Html.Raw(expenseChartData);
+            const expenseData = @Html.Raw(JsonSerializer.Serialize(Model.ExpenseChartData));
             if (expenseData.Values.length > 0) {
+                const defaultExpenseText = expenseData.Labels[0]; // The first item is the largest
                 const expenseCtx = document.getElementById('expenseChart').getContext('2d');
-                new Chart(expenseCtx, {
-                    type: 'pie',
+                const expenseChart = new Chart(expenseCtx, {
+                    type: 'doughnut',
+                    plugins: [doughnutCenterText], // <-- Register the custom plugin
                     data: {
                         labels: expenseData.Labels,
                         datasets: [{
                             data: expenseData.Values,
-                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
+                            backgroundColor: expenseData.Colors,
+                            borderWidth: 2
                         }]
+                    },
+                    options: {
+                        cutout: '70%', // Makes the doughnut hole larger
+                        plugins: {
+                            legend: { display: false },
+                            doughnutCenterText: { text: defaultExpenseText } // Set the default text
+                        },
+                        onHover: (event, chartElement) => {
+                            if (chartElement.length) {
+                                const index = chartElement[0].index;
+                                const label = expenseChart.data.labels[index];
+                                expenseChart.options.plugins.doughnutCenterText.text = label;
+                            } else {
+                                // When mouse leaves, reset to default
+                                expenseChart.options.plugins.doughnutCenterText.text = defaultExpenseText;
+                            }
+                            expenseChart.update();
+                        }
                     }
                 });
             } else {
@@ -173,18 +185,37 @@
             }
 
             // --- Income Chart ---
-            // The JSON is now directly assigned, not parsed from a string
-            const incomeData = @Html.Raw(incomeChartData);
+            const incomeData = @Html.Raw(JsonSerializer.Serialize(Model.IncomeChartData));
             if (incomeData.Values.length > 0) {
-                const incomeCtx = document.getElementById('incomeChart').getContext('2d');
-                new Chart(incomeCtx, {
-                    type: 'pie',
+                 const defaultIncomeText = incomeData.Labels[0]; // The first item is the largest
+                 const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+                 const incomeChart = new Chart(incomeCtx, {
+                    type: 'doughnut',
+                    plugins: [doughnutCenterText], // <-- Register the custom plugin
                     data: {
                         labels: incomeData.Labels,
                         datasets: [{
                             data: incomeData.Values,
-                            backgroundColor: ['#4BC0C0', '#9966FF', '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56'],
+                            backgroundColor: incomeData.Colors,
+                            borderWidth: 2
                         }]
+                    },
+                    options: {
+                        cutout: '70%',
+                        plugins: {
+                            legend: { display: false },
+                            doughnutCenterText: { text: defaultIncomeText }
+                        },
+                         onHover: (event, chartElement) => {
+                             if (chartElement.length) {
+                                 const index = chartElement[0].index;
+                                 const label = incomeChart.data.labels[index];
+                                 incomeChart.options.plugins.doughnutCenterText.text = label;
+                             } else {
+                                 incomeChart.options.plugins.doughnutCenterText.text = defaultIncomeText;
+                             }
+                             incomeChart.update();
+                         }
                     }
                 });
             } else {
