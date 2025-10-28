@@ -47,14 +47,17 @@
 <div class="row">
     <!-- WEST SIDE: Expenses -->
     <div class="col-md-6 mb-4">
-        <div class="dashboard-box chart-box">
+        <!-- Chart Box for Expenses -->
+        <div class="dashboard-box chart-box mb-3">
             <h3 class="text-center">Expenses</h3>
             <div class="pie-chart-container">
                 <canvas id="expenseChart"></canvas>
             </div>
             <a asp-controller="Transaction" asp-action="Create" asp-route-type="Expense" class="create-transaction-btn">+</a>
         </div>
-        <div class="dashboard-box mt-3">
+
+        <!-- History Box for Expenses -->
+        <div class="dashboard-box">
             <h5 class="mt-1">Recent Expenses</h5>
             <a asp-controller="Transaction" asp-action="Index" asp-route-type="Expense" class="stretched-link"></a>
             @if (Model.RecentExpenses.Any())
@@ -73,7 +76,6 @@
             {
                 <p class="text-center text-muted mt-3">No expenses found for this period.</p>
             }
-
             @if (Model.TotalExpenseCountForPeriod > 20)
             {
                 <div class="text-center text-muted mt-2">
@@ -85,14 +87,17 @@
 
     <!-- EAST SIDE: Income -->
     <div class="col-md-6 mb-4">
-        <div class="dashboard-box chart-box">
+        <!-- Chart Box for Income -->
+        <div class="dashboard-box chart-box mb-3">
             <h3 class="text-center">Income</h3>
             <div class="pie-chart-container">
                 <canvas id="incomeChart"></canvas>
             </div>
             <a asp-controller="Transaction" asp-action="Create" asp-route-type="Income" class="create-transaction-btn">+</a>
         </div>
-        <div class="dashboard-box mt-3">
+
+        <!-- History Box for Income -->
+        <div class="dashboard-box">
             <h5 class="mt-1">Recent Income</h5>
             <a asp-controller="Transaction" asp-action="Index" asp-route-type="Income" class="stretched-link"></a>
             @if (Model.RecentIncomes.Any())
@@ -111,7 +116,6 @@
             {
                 <p class="text-center text-muted mt-3">No income found for this period.</p>
             }
-
             @if (Model.TotalIncomeCountForPeriod > 20)
             {
                 <div class="text-center text-muted mt-2">
@@ -148,21 +152,37 @@
         }
 
         // --- CUSTOM CHART.JS PLUGIN to draw text in the center ---
-        const doughnutCenterText = {
+                const doughnutCenterText = {
             id: 'doughnutCenterText',
             afterDraw: (chart) => {
                 if (chart.options.plugins.doughnutCenterText.text) {
                     const ctx = chart.ctx;
                     const text = chart.options.plugins.doughnutCenterText.text;
-                    const x = (chart.chartArea.left + chart.chartArea.right) / 2;
-                    const y = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+
+                    // Get the available width of the doughnut hole
+                    const holeRadius = chart.innerRadius;
+                    const maxTextWidth = (holeRadius * 2) - 20; // Subtract 20px for padding
 
                     ctx.save();
                     ctx.font = 'bold 1.2em sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillStyle = '#6c757d';
-                    ctx.fillText(text, x, y);
+
+                    let textToDraw = text;
+
+                    // Shorten the text if it's too long
+                    if (ctx.measureText(textToDraw).width > maxTextWidth) {
+                        while (ctx.measureText(textToDraw + '...').width > maxTextWidth && textToDraw.length > 0) {
+                            textToDraw = textToDraw.slice(0, -1);
+                        }
+                        textToDraw += '...';
+                    }
+
+                    const x = (chart.chartArea.left + chart.chartArea.right) / 2;
+                    const y = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+
+                    ctx.fillText(textToDraw, x, y);
                     ctx.restore();
                 }
             }

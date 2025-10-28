@@ -14,20 +14,35 @@ html {
 }
 
 body {
-    margin-bottom: 60px; 
+    
 }
 
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    white-space: nowrap;
-    line-height: 60px; 
+/* --- Core Styles for the Dashboard --- */
+
+.dashboard-box {
+    position: relative;
+    border: 1px solid #dee2e6;
+    border-radius: .375rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
 }
 
 .pie-chart-container {
-    position: relative;
+    position: relative; /* Rule needed for the '+' button's position */
 }
+
+/* Makes the history box clickable */
+.dashboard-box a.stretched-link::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    content: "";
+}
+
+/* --- Floating "Create" Button --- */
 
 .create-transaction-btn {
     position: absolute;
@@ -38,7 +53,6 @@ body {
     background-color: #FFC107;
     color: black;
     border-radius: 50%;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,38 +61,10 @@ body {
     text-decoration: none;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     transition: transform 0.2s ease-in-out;
+    z-index: 2; /* Ensures this button is clickable above the stretched-link */
 }
 
     .create-transaction-btn:hover {
         color: black;
         transform: scale(1.1);
-    }
-
-.dashboard-box {
-    position: relative;
-    border: 1px solid #dee2e6;
-    border-radius: .375rem;
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
-    height: 100%;
-}
-
-    .dashboard-box a.stretched-link::after {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 1;
-        content: "";
-    }
-
-    .dashboard-box .create-transaction-btn {
-        z-index: 2; /* Button is clickable above the stretched-link */
-    }
-
-    .pie-chart-container {
-        position: relative;
-        width: 100%;
-        min-height: 300px; /* Gives the chart a stable height to render in */
     }
