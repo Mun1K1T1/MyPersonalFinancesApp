@@ -77,12 +77,8 @@ body {
         z-index: 2; /* Button is clickable above the stretched-link */
     }
 
-    .chart-box {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .chart-box .pie-chart-container {
-        flex-grow: 1;
-        position: relative; /* Remains a positioning context for the '+' button */
+    .pie-chart-container {
+        position: relative;
+        width: 100%;
+        min-height: 300px; /* Gives the chart a stable height to render in */
     }
