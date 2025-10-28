@@ -23,6 +23,29 @@ namespace FinanceManager.Controllers
             _userManager = userManager;
         }
 
+        public async Task<IActionResult> Index(string type)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewData["TransactionType"] = type;
+
+            IQueryable<Transaction> query = _context.Transactions
+                .Where(t => t.Account.ApplicationUserId == userId)
+                .Include(t => t.Account)
+                .Include(t => t.Category)
+                .OrderByDescending(t => t.Date);
+
+            if (type == "Income")
+            {
+                var model = await query.OfType<Income>().ToListAsync();
+                return View(model);
+            }
+            else
+            {
+                var model = await query.OfType<Expense>().ToListAsync();
+                return View(model);
+            }
+        }
+
         public async Task<IActionResult> Create(string type)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

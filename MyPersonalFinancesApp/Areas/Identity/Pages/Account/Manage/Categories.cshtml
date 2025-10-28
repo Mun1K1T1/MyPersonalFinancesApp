@@ -1,0 +1,77 @@
+﻿@page
+@model CategoriesModel
+@{
+    ViewData["Title"] = "Manage Categories";
+}
+
+<!-- Back Button -->
+<div class="mb-3">
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; Back to Dashboard</a>
+</div>
+
+<h3>@ViewData["Title"]</h3>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+
+<div class="row">
+    <!-- Expenses Column -->
+    <div class="col-md-6">
+        <div class="dashboard-box">
+            <h4 class="text-center">Expense Categories</h4>
+            <table class="table">
+                <thead><tr><th>Name</th><th>Color</th><th>Transactions</th><th>Total</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var cat in Model.ExpenseCategories)
+                    {
+                        <tr>
+                            <td>@cat.Name</td>
+                            <td><input type="color" value="@cat.Color" disabled /></td>
+                            <td>@cat.TransactionCount</td>
+                            <td>@cat.TotalAmount.ToString("C")</td>
+                            <td>
+                                <form method="post" asp-page-handler="Delete" asp-route-id="@cat.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="./Edit" asp-route-id="@cat.Id">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="text-end">
+                <a asp-controller="Category" asp-action="Create" asp-route-type="Expense" class="btn btn-primary">New</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Income Column -->
+    <div class="col-md-6">
+        <div class="dashboard-box">
+            <h4 class="text-center">Income Categories</h4>
+            <table class="table">
+                <thead><tr><th>Name</th><th>Color</th><th>Transactions</th><th>Total</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var cat in Model.IncomeCategories)
+                    {
+                        <tr>
+                            <td>@cat.Name</td>
+                            <td><input type="color" value="@cat.Color" disabled /></td>
+                            <td>@cat.TransactionCount</td>
+                            <td>@cat.TotalAmount.ToString("C")</td>
+                            <td>
+                                <form method="post" asp-page-handler="Delete" asp-route-id="@cat.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="./Edit" asp-route-id="@cat.Id">Edit</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="text-end">
+                <a asp-controller="Category" asp-action="Create" asp-route-type="Income" class="btn btn-primary">New</a>
+            </div>
+        </div>
+    </div>
+</div>

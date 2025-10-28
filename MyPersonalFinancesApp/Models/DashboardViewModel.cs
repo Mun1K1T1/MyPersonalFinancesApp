@@ -3,6 +3,15 @@ using System.Collections.Generic;
 
 namespace FinanceManager.Models
 {
+    public enum TimePeriod
+    {
+        Day,
+        Week,
+        Month,
+        Year,
+        AllTime
+    }
+
     // A simple class to hold data for our charts
     public class ChartData
     {
@@ -17,9 +26,15 @@ namespace FinanceManager.Models
         public int? SelectedAccountId { get; set; }
         public SelectList? Accounts { get; set; }
 
-        // Lists for the 10 recent transactions
+        public decimal CurrentAmount { get; set; }
+        public TimePeriod SelectedTimePeriod { get; set; } = TimePeriod.AllTime; // Default to AllTime
+
+        // Lists for the 20 recent transactions
         public List<Income> RecentIncomes { get; set; } = new List<Income>();
         public List<Expense> RecentExpenses { get; set; } = new List<Expense>();
+
+        public int TotalIncomeCountForPeriod { get; set; }
+        public int TotalExpenseCountForPeriod { get; set; }
 
         // Data for the pie charts
         public ChartData IncomeChartData { get; set; } = new ChartData();

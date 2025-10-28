@@ -2,114 +2,122 @@
 @using System.Text.Json;
 @{
     ViewData["Title"] = "Dashboard";
-    var expenseChartData = JsonSerializer.Serialize(Model.ExpenseChartData);
-    var incomeChartData = JsonSerializer.Serialize(Model.IncomeChartData);
 }
 
-<!-- Account Filter Dropdown -->
-<div class="row justify-content-center mb-4">
-    <div class="col-md-4">
-        <!-- REMOVE the onchange attribute from the form tag -->
-        <form asp-action="Index" method="get" id="accountFilterForm">
+<!-- MASTER FILTER FORM -->
+<form asp-action="Index" method="get" id="filterForm">
+    <!-- Account Filter Dropdown -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-4">
             <div class="input-group">
-                <label class="input-group-text" for="accountIdSelect">Account:</label>
-                <!-- REMOVE the onchange attribute from the select tag as well -->
+                <label class="input-group-text">Account:</label>
                 <select asp-for="SelectedAccountId" class="form-select" id="accountIdSelect">
                     <option value="">General (All Accounts)</option>
-
-                    <!-- Loop through user's accounts -->
-                    @foreach (var account in Model.Accounts)
+                    @if (Model.Accounts != null)
                     {
-                        <option value="@account.Value" selected="@(Model.SelectedAccountId.ToString() == account.Value)">
-                            @account.Text
-                        </option>
+                        @foreach (var account in Model.Accounts)
+                        {
+                            <option value="@account.Value" selected="@(Model.SelectedAccountId.ToString() == account.Value)">@account.Text</option>
+                        }
                     }
-
-                    <!-- Add the separator and New Account at the end -->
                     <option disabled>------------------</option>
                     <option value="create_new">+ New Account</option>
                 </select>
             </div>
-        </form>
+        </div>
     </div>
-</div>
+
+    <!-- CURRENT AMOUNT & TIME FILTER BOX -->
+    <div class="dashboard-box text-center mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h5 class="text-muted">CURRENT AMOUNT</h5>
+                <h2>@Model.CurrentAmount.ToString("C")</h2>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <label class="input-group-text">Period:</label>
+                    <select asp-for="SelectedTimePeriod" asp-items="Html.GetEnumSelectList<TimePeriod>()" class="form-select" id="timePeriodSelect"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 
 <div class="row">
     <!-- WEST SIDE: Expenses -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header text-center">
-                <h3>Expenses</h3>
+    <div class="col-md-6 mb-4">
+        <div class="dashboard-box chart-box">
+            <h3 class="text-center">Expenses</h3>
+            <div class="pie-chart-container">
+                <canvas id="expenseChart"></canvas>
             </div>
-            <div class="card-body">
-                <div class="pie-chart-container">
-                    <canvas id="expenseChart"></canvas>
-                    @if (!Model.ExpenseChartData.Values.Any())
+            <a asp-controller="Transaction" asp-action="Create" asp-route-type="Expense" class="create-transaction-btn">+</a>
+        </div>
+        <div class="dashboard-box mt-3">
+            <h5 class="mt-1">Recent Expenses</h5>
+            <a asp-controller="Transaction" asp-action="Index" asp-route-type="Expense" class="stretched-link"></a>
+            @if (Model.RecentExpenses.Any())
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var expense in Model.RecentExpenses)
                     {
-                        <a asp-controller="Transaction" asp-action="Create" asp-route-type="Expense" class="create-transaction-btn">+</a>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div><strong>@expense.Category.Name</strong><small class="d-block text-muted">@expense.Date.ToShortDateString()</small></div>
+                            <span class="badge bg-danger rounded-pill">-@expense.Amount.ToString("C")</span>
+                        </li>
                     }
+                </ul>
+            }
+            else
+            {
+                <p class="text-center text-muted mt-3">No expenses found for this period.</p>
+            }
+
+            @if (Model.TotalExpenseCountForPeriod > 20)
+            {
+                <div class="text-center text-muted mt-2">
+                    ... and @(Model.TotalExpenseCountForPeriod - 20) more
                 </div>
-                <hr />
-                <h5 class="mt-4">Recent Expenses</h5>
-                @if (Model.RecentExpenses.Any())
-                {
-                    <ul class="list-group list-group-flush">
-                        @foreach (var expense in Model.RecentExpenses)
-                        {
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>@expense.Category.Name</strong>
-                                    <small class="d-block text-muted">@expense.Date.ToShortDateString()</small>
-                                </div>
-                                <span class="badge bg-danger rounded-pill">-@expense.Amount.ToString("C")</span>
-                            </li>
-                        }
-                    </ul>
-                }
-                else
-                {
-                    <p class="text-center text-muted">No recent expenses found.</p>
-                }
-            </div>
+            }
         </div>
     </div>
 
     <!-- EAST SIDE: Income -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header text-center">
-                <h3>Income</h3>
+    <div class="col-md-6 mb-4">
+        <div class="dashboard-box chart-box">
+            <h3 class="text-center">Income</h3>
+            <div class="pie-chart-container">
+                <canvas id="incomeChart"></canvas>
             </div>
-            <div class="card-body">
-                <div class="pie-chart-container">
-                    <canvas id="incomeChart"></canvas>
-                    @if (!Model.IncomeChartData.Values.Any())
+            <a asp-controller="Transaction" asp-action="Create" asp-route-type="Income" class="create-transaction-btn">+</a>
+        </div>
+        <div class="dashboard-box mt-3">
+            <h5 class="mt-1">Recent Income</h5>
+            <a asp-controller="Transaction" asp-action="Index" asp-route-type="Income" class="stretched-link"></a>
+            @if (Model.RecentIncomes.Any())
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var income in Model.RecentIncomes)
                     {
-                        <a asp-controller="Transaction" asp-action="Create" asp-route-type="Income" class="create-transaction-btn">+</a>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div><strong>@income.Category.Name</strong><small class="d-block text-muted">@income.Date.ToShortDateString()</small></div>
+                            <span class="badge bg-success rounded-pill">+@income.Amount.ToString("C")</span>
+                        </li>
                     }
+                </ul>
+            }
+            else
+            {
+                <p class="text-center text-muted mt-3">No income found for this period.</p>
+            }
+
+            @if (Model.TotalIncomeCountForPeriod > 20)
+            {
+                <div class="text-center text-muted mt-2">
+                    ... and @(Model.TotalIncomeCountForPeriod - 20) more
                 </div>
-                <hr />
-                <h5 class="mt-4">Recent Income</h5>
-                @if (Model.RecentIncomes.Any())
-                {
-                    <ul class="list-group list-group-flush">
-                        @foreach (var income in Model.RecentIncomes)
-                        {
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>@income.Category.Name</strong>
-                                    <small class="d-block text-muted">@income.Date.ToShortDateString()</small>
-                                </div>
-                                <span class="badge bg-success rounded-pill">+@income.Amount.ToString("C")</span>
-                            </li>
-                        }
-                    </ul>
-                }
-                else
-                {
-                    <p class="text-center text-muted">No recent income found.</p>
-                }
-            </div>
+            }
         </div>
     </div>
 </div>
@@ -118,7 +126,25 @@
     <script>
         // --- Reusable function for the placeholder chart ---
         function createPlaceholderChart(canvasId) {
-            // ... (this function remains the same as before)
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['No Data'],
+                    datasets: [{
+                        data: [1],
+                        backgroundColor: ['#E9ECEF'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: { enabled: false },
+                        legend: { display: false }
+                    }
+                }
+            });
         }
 
         // --- CUSTOM CHART.JS PLUGIN to draw text in the center ---
@@ -128,8 +154,6 @@
                 if (chart.options.plugins.doughnutCenterText.text) {
                     const ctx = chart.ctx;
                     const text = chart.options.plugins.doughnutCenterText.text;
-                    const textMetrics = ctx.measureText(text);
-
                     const x = (chart.chartArea.left + chart.chartArea.right) / 2;
                     const y = (chart.chartArea.top + chart.chartArea.bottom) / 2;
 
@@ -137,22 +161,47 @@
                     ctx.font = 'bold 1.2em sans-serif';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillStyle = '#6c757d'; // Bootstrap secondary color
+                    ctx.fillStyle = '#6c757d';
                     ctx.fillText(text, x, y);
                     ctx.restore();
                 }
             }
         };
 
+        // --- SINGLE DOMContentLoaded LISTENER ---
         document.addEventListener('DOMContentLoaded', function () {
+
+            // --- LOGIC FROM SCRIPT 2: FORM FILTER HANDLING ---
+            const accountSelect = document.getElementById('accountIdSelect');
+            const timePeriodSelect = document.getElementById('timePeriodSelect');
+            const filterForm = document.getElementById('filterForm');
+
+            function submitForm() {
+                filterForm.submit();
+            }
+
+            if (accountSelect) {
+                accountSelect.addEventListener('change', function () {
+                    if (this.value === 'create_new') {
+                        window.location.href = '@Url.Action("Create", "AccountSetup")';
+                    } else {
+                        submitForm();
+                    }
+                });
+            }
+            if (timePeriodSelect) {
+                timePeriodSelect.addEventListener('change', submitForm);
+            }
+
+            // --- LOGIC FROM SCRIPT 1: CHART RENDERING ---
             // --- Expense Chart ---
             const expenseData = @Html.Raw(JsonSerializer.Serialize(Model.ExpenseChartData));
             if (expenseData.Values.length > 0) {
-                const defaultExpenseText = expenseData.Labels[0]; // The first item is the largest
+                const defaultExpenseText = expenseData.Labels[0];
                 const expenseCtx = document.getElementById('expenseChart').getContext('2d');
                 const expenseChart = new Chart(expenseCtx, {
                     type: 'doughnut',
-                    plugins: [doughnutCenterText], // <-- Register the custom plugin
+                    plugins: [doughnutCenterText],
                     data: {
                         labels: expenseData.Labels,
                         datasets: [{
@@ -162,10 +211,11 @@
                         }]
                     },
                     options: {
-                        cutout: '70%', // Makes the doughnut hole larger
+                        cutout: '70%',
+                        maintainAspectRatio: false,
                         plugins: {
                             legend: { display: false },
-                            doughnutCenterText: { text: defaultExpenseText } // Set the default text
+                            doughnutCenterText: { text: defaultExpenseText }
                         },
                         onHover: (event, chartElement) => {
                             if (chartElement.length) {
@@ -173,7 +223,6 @@
                                 const label = expenseChart.data.labels[index];
                                 expenseChart.options.plugins.doughnutCenterText.text = label;
                             } else {
-                                // When mouse leaves, reset to default
                                 expenseChart.options.plugins.doughnutCenterText.text = defaultExpenseText;
                             }
                             expenseChart.update();
@@ -187,11 +236,11 @@
             // --- Income Chart ---
             const incomeData = @Html.Raw(JsonSerializer.Serialize(Model.IncomeChartData));
             if (incomeData.Values.length > 0) {
-                 const defaultIncomeText = incomeData.Labels[0]; // The first item is the largest
-                 const incomeCtx = document.getElementById('incomeChart').getContext('2d');
-                 const incomeChart = new Chart(incomeCtx, {
+                const defaultIncomeText = incomeData.Labels[0];
+                const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+                const incomeChart = new Chart(incomeCtx, {
                     type: 'doughnut',
-                    plugins: [doughnutCenterText], // <-- Register the custom plugin
+                    plugins: [doughnutCenterText],
                     data: {
                         labels: incomeData.Labels,
                         datasets: [{
@@ -202,20 +251,21 @@
                     },
                     options: {
                         cutout: '70%',
+                        maintainAspectRatio: false,
                         plugins: {
                             legend: { display: false },
                             doughnutCenterText: { text: defaultIncomeText }
                         },
-                         onHover: (event, chartElement) => {
-                             if (chartElement.length) {
-                                 const index = chartElement[0].index;
-                                 const label = incomeChart.data.labels[index];
-                                 incomeChart.options.plugins.doughnutCenterText.text = label;
-                             } else {
-                                 incomeChart.options.plugins.doughnutCenterText.text = defaultIncomeText;
-                             }
-                             incomeChart.update();
-                         }
+                        onHover: (event, chartElement) => {
+                            if (chartElement.length) {
+                                const index = chartElement[0].index;
+                                const label = incomeChart.data.labels[index];
+                                incomeChart.options.plugins.doughnutCenterText.text = label;
+                            } else {
+                                incomeChart.options.plugins.doughnutCenterText.text = defaultIncomeText;
+                            }
+                            incomeChart.update();
+                        }
                     }
                 });
             } else {

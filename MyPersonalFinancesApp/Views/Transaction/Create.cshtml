@@ -54,20 +54,31 @@
             <!-- Categories (Now conditional) -->
             @if (Model.TransactionType == "Expense")
             {
+
                 <div class="form-floating mb-3">
-                    <select asp-for="CategoryId" asp-items="Model.ExpenseCategories" class="form-select category-select">
+                    <select asp-for="CategoryId" class="form-select category-select">
                         <option selected disabled>-- Select Category --</option>
+                        @foreach (var category in Model.ExpenseCategories)
+                        {
+                            <option value="@category.Value">@category.Text</option>
+                        }
                         <option value="create_new_category">+ Add your own</option>
                     </select>
                     <label asp-for="CategoryId">Expense Category</label>
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
+
+
             }
             else
-            {
+            {            
                 <div class="form-floating mb-3">
                     <select asp-for="CategoryId" asp-items="Model.IncomeCategories" class="form-select category-select">
                         <option selected disabled>-- Select Category --</option>
+                        @foreach (var category in Model.IncomeCategories)
+                        {
+                            <option value="@category.Value">@category.Text</option>
+                        }
                         <option value="create_new_category">+ Add your own</option>
                     </select>
                     <label asp-for="CategoryId">Income Category</label>

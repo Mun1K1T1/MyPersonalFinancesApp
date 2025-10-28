@@ -24,8 +24,7 @@ namespace FinanceManager.Controllers
             _userManager = userManager;
         }
 
-        // The 'accountId' parameter will come from the dropdown filter
-        public async Task<IActionResult> Index(int? accountId)
+        public async Task<IActionResult> Index(int? accountId, TimePeriod selectedTimePeriod = TimePeriod.AllTime)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userAccounts = await _context.Accounts
@@ -35,41 +34,70 @@ namespace FinanceManager.Controllers
             var viewModel = new DashboardViewModel
             {
                 SelectedAccountId = accountId,
-                Accounts = new SelectList(userAccounts, "Id", "Name", accountId)
+                Accounts = new SelectList(userAccounts, "Id", "Name", accountId),
+                SelectedTimePeriod = selectedTimePeriod // The received value
             };
 
-            //Transactions for the current user
-            var transactionsQuery = _context.Transactions.Where(t => t.Account.ApplicationUserId == userId);
-
-            // If a specific account is selected, filter by it
+            // --- CURRENT AMOUNT CALCULATION ---
+            IQueryable<Transaction> balanceQuery = _context.Transactions.Where(t => t.Account.ApplicationUserId == userId);
             if (accountId.HasValue)
             {
-                transactionsQuery = transactionsQuery.Where(t => t.AccountId == accountId.Value);
+                balanceQuery = balanceQuery.Where(t => t.AccountId == accountId.Value);
             }
 
-            // Get Recent Incomes & Expenses (Last 10)
-            viewModel.RecentIncomes = await transactionsQuery.OfType<Income>()
+            var totalIncome = await balanceQuery.OfType<Income>().SumAsync(i => (decimal?)i.Amount) ?? 0;
+            var totalExpense = await balanceQuery.OfType<Expense>().SumAsync(e => (decimal?)e.Amount) ?? 0;
+            viewModel.CurrentAmount = totalIncome - totalExpense;
+
+            // --- CHART AND HISTORY QUERY ---
+            IQueryable<Transaction> filteredQuery = _context.Transactions.Where(t => t.Account.ApplicationUserId == userId);
+            if (accountId.HasValue)
+            {
+                filteredQuery = filteredQuery.Where(t => t.AccountId == accountId.Value);
+            }
+
+            DateTime startDate = DateTime.MinValue;
+            switch (selectedTimePeriod)
+            {
+                case TimePeriod.Day:
+                    startDate = DateTime.Today;
+                    break;
+                case TimePeriod.Week:
+                    startDate = DateTime.Today.AddDays(-6);
+                    break;
+                case TimePeriod.Month:
+                    startDate = DateTime.Today.AddMonths(-1);
+                    break;
+                case TimePeriod.Year:
+                    startDate = DateTime.Today.AddYears(-1);
+                    break;
+            }
+
+            if (selectedTimePeriod != TimePeriod.AllTime)
+            {
+                filteredQuery = filteredQuery.Where(t => t.Date >= startDate);
+            }
+
+            // Get Total Counts BEFORE taking the top 20
+            viewModel.TotalIncomeCountForPeriod = await filteredQuery.OfType<Income>().CountAsync();
+            viewModel.TotalExpenseCountForPeriod = await filteredQuery.OfType<Expense>().CountAsync();
+
+            viewModel.RecentIncomes = await filteredQuery.OfType<Income>()
                 .Include(i => i.Category)
                 .OrderByDescending(i => i.Date)
-                .Take(10)
+                .Take(20)
                 .ToListAsync();
 
-            viewModel.RecentExpenses = await transactionsQuery.OfType<Expense>()
+            viewModel.RecentExpenses = await filteredQuery.OfType<Expense>()
                 .Include(e => e.Category)
                 .OrderByDescending(e => e.Date)
-                .Take(10)
+                .Take(20)
                 .ToListAsync();
 
-            // Prepare Expense Chart Data
-            var expenseData = await transactionsQuery.OfType<Expense>()
+            var expenseData = await filteredQuery.OfType<Expense>()
                 .Include(e => e.Category)
-                .GroupBy(e => new { e.Category.Name, e.Category.Color }) // Group by Color
-                .Select(group => new
-                {
-                    Category = group.Key.Name,
-                    Color = group.Key.Color,
-                    Total = group.Sum(e => e.Amount)
-                })
+                .GroupBy(e => new { e.Category.Name, e.Category.Color })
+                .Select(group => new { Category = group.Key.Name, Color = group.Key.Color, Total = group.Sum(e => e.Amount) })
                 .OrderByDescending(x => x.Total)
                 .ToListAsync();
 
@@ -77,16 +105,10 @@ namespace FinanceManager.Controllers
             viewModel.ExpenseChartData.Values = expenseData.Select(x => x.Total).ToList();
             viewModel.ExpenseChartData.Colors = expenseData.Select(x => x.Color).ToList();
 
-            // Prepare Income Chart Data
-            var incomeData = await transactionsQuery.OfType<Income>()
+            var incomeData = await filteredQuery.OfType<Income>()
                 .Include(i => i.Category)
-                .GroupBy(i => new { i.Category.Name, i.Category.Color }) // Group by Color
-                .Select(group => new
-                {
-                    Category = group.Key.Name,
-                    Color = group.Key.Color,
-                    Total = group.Sum(i => i.Amount)
-                })
+                .GroupBy(i => new { i.Category.Name, i.Category.Color })
+                .Select(group => new { Category = group.Key.Name, Color = group.Key.Color, Total = group.Sum(i => i.Amount) })
                 .OrderByDescending(x => x.Total)
                 .ToListAsync();
 

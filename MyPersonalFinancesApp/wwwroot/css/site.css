@@ -53,3 +53,36 @@ body {
         color: black;
         transform: scale(1.1);
     }
+
+.dashboard-box {
+    position: relative;
+    border: 1px solid #dee2e6;
+    border-radius: .375rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    height: 100%;
+}
+
+    .dashboard-box a.stretched-link::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        content: "";
+    }
+
+    .dashboard-box .create-transaction-btn {
+        z-index: 2; /* Button is clickable above the stretched-link */
+    }
+
+    .chart-box {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chart-box .pie-chart-container {
+        flex-grow: 1;
+        position: relative; /* Remains a positioning context for the '+' button */
+    }

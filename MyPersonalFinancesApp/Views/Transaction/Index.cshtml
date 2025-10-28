@@ -1,0 +1,34 @@
+﻿@model IEnumerable<FinanceManager.Models.Transaction>
+@{
+    var type = ViewData["TransactionType"] as string;
+    ViewData["Title"] = $"{type} History";
+}
+
+<!-- Back Button -->
+<div class="mb-3">
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; Back to Dashboard</a>
+</div>
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Account</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Date.ToString("g")</td>
+                <td>@item.Category.Name</td>
+                <td>@item.Account.Name</td>
+                <td>@item.Amount.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>
