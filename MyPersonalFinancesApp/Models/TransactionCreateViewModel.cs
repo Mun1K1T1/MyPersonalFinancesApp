@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FinanceManager.Models // The namespace stays consistent with your other models
+namespace FinanceManager.Models
 {
     public class TransactionCreateViewModel
     {
@@ -34,15 +34,5 @@ namespace FinanceManager.Models // The namespace stays consistent with your othe
 
         [StringLength(500)]
         public string? Comment { get; set; }
-
-        // Future use: public IFormFileCollection Attachments { get; set; }
-
-        // Fields for Regular Payments
-        [Display(Name = "Make it regular")]
-        public bool IsRegular { get; set; }
-
-        public string? PaymentName { get; set; }
-        public Frequency Frequency { get; set; }
-        public DateTime? EndDate { get; set; }
     }
 }

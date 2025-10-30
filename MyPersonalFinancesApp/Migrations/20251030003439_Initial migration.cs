@@ -6,14 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FinanceManager.Migrations
 {
     /// <inheritdoc />
-    public partial class AddFinancialEntitiesAndRelationships : Migration
+    public partial class Initialmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Expenses");
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -196,6 +193,7 @@ namespace FinanceManager.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
+                    Color = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
                     ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -227,46 +225,6 @@ namespace FinanceManager.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RegularPayments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Frequency = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Comment = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    AccountId = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RegularPayments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RegularPayments_Accounts_AccountId",
-                        column: x => x.AccountId,
-                        principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RegularPayments_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RegularPayments_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -400,21 +358,6 @@ namespace FinanceManager.Migrations
                 column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RegularPayments_AccountId",
-                table: "RegularPayments",
-                column: "AccountId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RegularPayments_ApplicationUserId",
-                table: "RegularPayments",
-                column: "ApplicationUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RegularPayments_CategoryId",
-                table: "RegularPayments",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Tags_ApplicationUserId",
                 table: "Tags",
                 column: "ApplicationUserId");
@@ -457,9 +400,6 @@ namespace FinanceManager.Migrations
                 name: "Attachments");
 
             migrationBuilder.DropTable(
-                name: "RegularPayments");
-
-            migrationBuilder.DropTable(
                 name: "TransactionTags");
 
             migrationBuilder.DropTable(
@@ -479,24 +419,6 @@ namespace FinanceManager.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.CreateTable(
-                name: "Expenses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Amount = table.Column<double>(type: "float", nullable: false),
-                    BalanceId = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Tag = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Expenses", x => x.Id);
-                });
         }
     }
 }

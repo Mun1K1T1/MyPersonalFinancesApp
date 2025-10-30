@@ -18,7 +18,6 @@ namespace FinanceManager.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TransactionTag> TransactionTags { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
-        public DbSet<RegularPayment> RegularPayments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -27,23 +26,11 @@ namespace FinanceManager.Data
             builder.Entity<TransactionTag>()
                 .HasKey(tt => new { tt.TransactionId, tt.TagId });
 
-            /*builder.Entity<Transaction>()
-               .HasOne(t => t.Account)
-               .WithMany(a => a.Transactions)
-               .HasForeignKey(t => t.AccountId)
-               .OnDelete(DeleteBehavior.Cascade);*/
-
             builder.Entity<TransactionTag>()
                 .HasOne(tt => tt.Transaction)
                 .WithMany(t => t.TransactionTags)
                 .HasForeignKey(tt => tt.TransactionId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            /*builder.Entity<Transaction>()
-                .HasOne(t => t.Category)
-                .WithMany()
-                .HasForeignKey(t => t.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict);*/
 
             builder.Entity<TransactionTag>()
                 .HasOne(tt => tt.Tag)
@@ -55,30 +42,6 @@ namespace FinanceManager.Data
                 .HasOne(t => t.Category)
                 .WithMany()
                 .HasForeignKey(t => t.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            /*builder.Entity<RegularPayment>()
-                .HasOne(rp => rp.Account)
-                .WithMany()
-                .HasForeignKey(rp => rp.AccountId)
-                .OnDelete(DeleteBehavior.Restrict);*/
-
-            builder.Entity<RegularPayment>()
-               .HasOne(rp => rp.Account)
-               .WithMany()
-               .HasForeignKey(rp => rp.AccountId)
-               .OnDelete(DeleteBehavior.Restrict);
-
-            /*builder.Entity<RegularPayment>()
-                .HasOne(rp => rp.Category)
-                .WithMany()
-                .HasForeignKey(rp => rp.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict);*/
-
-            builder.Entity<RegularPayment>()
-                .HasOne(rp => rp.Category)
-                .WithMany()
-                .HasForeignKey(rp => rp.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
