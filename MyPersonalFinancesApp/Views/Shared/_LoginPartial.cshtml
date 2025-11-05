@@ -7,7 +7,6 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        // Get the full user object to access the new FullName property
         var user = await UserManager.GetUserAsync(User);
         var displayName = user?.FullName ?? user?.UserName;
 

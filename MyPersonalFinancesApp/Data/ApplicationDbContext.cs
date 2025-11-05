@@ -18,6 +18,7 @@ namespace FinanceManager.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TransactionTag> TransactionTags { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
+        public DbSet<RegularPayment> RegularPayments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -42,6 +43,18 @@ namespace FinanceManager.Data
                 .HasOne(t => t.Category)
                 .WithMany()
                 .HasForeignKey(t => t.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<RegularPayment>()
+              .HasOne(rp => rp.Account)
+              .WithMany()
+              .HasForeignKey(rp => rp.AccountId)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<RegularPayment>()
+                .HasOne(rp => rp.Category)
+                .WithMany()
+                .HasForeignKey(rp => rp.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
