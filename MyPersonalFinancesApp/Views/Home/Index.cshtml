@@ -6,6 +6,7 @@
 
 <!-- MASTER FILTER FORM -->
 <form asp-action="Index" method="get" id="filterForm">
+    <input type="hidden" name="accountId" value="@Model.SelectedAccountId" />
     <!-- Account Filter Dropdown -->
     <div class="row justify-content-center mb-4">
         <div class="col-md-4">

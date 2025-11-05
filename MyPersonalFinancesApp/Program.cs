@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FinanceManager.Data;
 using FinanceManager.Models;
 using FinanceManager.Filters;
+using FinanceManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +23,11 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add<EnsureUserHasAccountFilter>();
 });
 
+builder.Services.AddHostedService<RegularPaymentProcessor>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

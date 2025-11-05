@@ -1,0 +1,79 @@
+﻿@page
+@model RegularPaymentsModel
+@{
+    ViewData["Title"] = "Regular Payments";
+}
+
+<!-- Back Button -->
+<div class="mb-3">
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; Back to Dashboard</a>
+</div>
+
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>@ViewData["Title"]</h3>
+    <a asp-page="./CreateRegularPayment" class="btn btn-primary">Create New</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Next Run</th>
+                <th>Amount</th>
+                <th>Frequency</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.Payments)
+            {
+                <tr>
+                    <td>@p.Name <br /><small class="text-muted">@p.Account.Name / @p.Category.Name</small></td>
+                    <td>@p.NextRunDate.ToString("g")</td>
+                    <td class="@(p.Type == CategoryType.Income ? "text-success" : "text-danger")">
+                        <strong>@(p.Type == CategoryType.Income ? "+" : "-")@p.Amount.ToString("C")</strong>
+                    </td>
+                    <td>Every @p.Interval @p.FrequencyUnit.ToString()s</td>
+                    <td>
+                        @if (p.IsActive)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+
+                            <span class="badge bg-secondary">Cancelled</span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        @if (p.StartDate >= DateTime.Today)
+                        {
+                            <a asp-page="./EditRegularPayment" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        }
+
+                        <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@p.Id" class="d-inline ms-1">
+                            <button type="submit" class="btn btn-sm btn-outline-warning">@(p.IsActive ? "Cancel" : "Reinstate")</button>
+                        </form>
+
+                        @if (p.StartDate >= DateTime.Today)
+                        {
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@p.Id" class="d-inline ms-1">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to permanently delete this payment?');">Delete</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            @if (!Model.Payments.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center text-muted">You have no regular payments scheduled.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

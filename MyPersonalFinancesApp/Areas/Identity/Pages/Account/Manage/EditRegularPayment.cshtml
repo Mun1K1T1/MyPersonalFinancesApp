@@ -1,0 +1,130 @@
+﻿@page "{id:int}"
+@model EditRegularPaymentModel
+@{
+    ViewData["Title"] = "Edit Regular Payment";
+}
+
+<!-- Back Button -->
+<div class="mb-3">
+    <a asp-page="./RegularPayments" class="btn btn-link text-secondary text-decoration-none">&lt; Back to List</a>
+</div>
+
+<h3>@ViewData["Title"]</h3>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form method="post">
+            <!-- Hidden field for the ID is crucial for updates -->
+            <input type="hidden" asp-for="Input.Id" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Name" class="form-control" placeholder="e.g., Monthly Rent" />
+                <label asp-for="Input.Name"></label>
+                <span asp-validation-for="Input.Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Payment Type</label>
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" asp-for="Input.Type" value="@CategoryType.Expense" id="type-expense">
+                    <label class="btn btn-outline-danger" for="type-expense">Expense</label>
+                    <input type="radio" class="btn-check" asp-for="Input.Type" value="@CategoryType.Income" id="type-income">
+                    <label class="btn btn-outline-success" for="type-income">Income</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-floating mb-3">
+                    <input asp-for="Input.Amount" class="form-control" placeholder="0.00" />
+                    <label asp-for="Input.Amount" class="ms-2"></label>
+                    <span asp-validation-for="Input.Amount" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 form-floating mb-3">
+                    <select asp-for="Input.AccountId" asp-items="Model.Accounts" class="form-select">
+                        <option value="" selected disabled>-- Select Account --</option>
+                    </select>
+                    <label asp-for="Input.AccountId" class="ms-2"></label>
+                </div>
+            </div>
+
+            <div class="form-floating mb-3" id="expense-category-div">
+                <select asp-for="Input.CategoryId" asp-items="Model.ExpenseCategories" class="form-select"><option value="" selected disabled>-- Select Category --</option></select>
+                <label asp-for="Input.CategoryId">Expense Category</label>
+            </div>
+            <div class="form-floating mb-3" id="income-category-div" style="display:none;">
+                <select asp-for="Input.CategoryId" asp-items="Model.IncomeCategories" class="form-select" disabled><option value="" selected disabled>-- Select Category --</option></select>
+                <label asp-for="Input.CategoryId">Income Category</label>
+            </div>
+            <span asp-validation-for="Input.CategoryId" class="text-danger d-block mb-2"></span>
+
+            <div class="row align-items-center mb-3">
+                <div class="col-auto">
+                    <label class="col-form-label">Repeat every</label>
+                </div>
+                <div class="col-md-2">
+                    <input asp-for="Input.Interval" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <select asp-for="Input.FrequencyUnit" asp-items="Html.GetEnumSelectList<FrequencyUnit>()" class="form-select"></select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 form-floating mb-3">
+                    <input asp-for="Input.StartDate" class="form-control" />
+                    <label asp-for="Input.StartDate" class="ms-2"></label>
+                </div>
+                <div class="col-md-4 form-floating mb-3">
+                    <input asp-for="Input.EndDate" class="form-control" />
+                    <label asp-for="Input.EndDate" class="ms-2"></label>
+                </div>
+                <div class="col-md-4 form-floating mb-3">
+                    <input asp-for="Input.TimeOfDay" class="form-control" />
+                    <label asp-for="Input.TimeOfDay" class="ms-2"></label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const expenseRadio = document.getElementById('type-expense');
+            const incomeRadio = document.getElementById('type-income');
+            const expenseDiv = document.getElementById('expense-category-div');
+            const incomeDiv = document.getElementById('income-category-div');
+            const expenseSelect = expenseDiv.querySelector('select');
+            const incomeSelect = incomeDiv.querySelector('select');
+
+            function toggleCategories() {
+                if (expenseRadio.checked) {
+                    expenseDiv.style.display = 'block';
+                    expenseSelect.disabled = false;
+                    incomeDiv.style.display = 'none';
+                    incomeSelect.disabled = true;
+                    incomeSelect.name = '';
+                    expenseSelect.name = 'Input.CategoryId';
+                } else {
+                    expenseDiv.style.display = 'none';
+                    expenseSelect.disabled = true;
+                    incomeDiv.style.display = 'block';
+                    incomeSelect.disabled = false;
+                    expenseSelect.name = '';
+                    incomeSelect.name = 'Input.CategoryId';
+                }
+            }
+
+            expenseRadio.addEventListener('change', toggleCategories);
+            incomeRadio.addEventListener('change', toggleCategories);
+
+            toggleCategories();
+        });
+    </script>
+}
