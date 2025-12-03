@@ -4,6 +4,10 @@ using FinanceManager.Data;
 using FinanceManager.Models;
 using FinanceManager.Filters;
 using FinanceManager.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,11 +23,29 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 
 builder.Services.AddControllersWithViews(options =>
 {
-    // This line registers our filter to be used on every controller action
+    // This line registers the filter to be used on every controller action
     options.Filters.Add<EnsureUserHasAccountFilter>();
-});
+})
+.AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
+.AddDataAnnotationsLocalization(); ;
 
 builder.Services.AddHostedService<RegularPaymentProcessor>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Models/Resources");
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[]
+    {
+        new CultureInfo("en-US"),
+        new CultureInfo("uk-UA")
+    };
+
+    options.DefaultRequestCulture = new RequestCulture("en-US");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
 
 var app = builder.Build();
 
@@ -36,6 +58,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+app.UseRequestLocalization(locOptions.Value);
 
 app.UseRouting();
 

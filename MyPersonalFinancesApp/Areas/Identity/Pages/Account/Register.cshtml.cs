@@ -2,16 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using FinanceManager.Data;
-using FinanceManager.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +10,16 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
+using FinanceManager.Models;
+using FinanceManager.Data;
 
 namespace FinanceManager.Areas.Identity.Pages.Account
 {
@@ -50,71 +50,44 @@ namespace FinanceManager.Areas.Identity.Pages.Account
             _context = context;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public string ReturnUrl { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            public string FirstName { get; set; }
-
-            [Required]
-            [Display(Name = "Last Name")]
-            public string LastName { get; set; }
-
-            [Display(Name = "Patronymic (Optional)")]
-            public string? Patronymic { get; set; }
-
-            [Required]
-            [Display(Name = "What is this profile for?")]
-            public string ProfilePurpose { get; set; }
-
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+            [Display(Name = "Patronymic")]
+            public string Patronymic { get; set; }
+
+            [Display(Name = "What the profile is created for")]
+            public string ProfilePurpose { get; set; }
         }
 
 
@@ -145,10 +118,10 @@ namespace FinanceManager.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    await CreateDefaultCategoriesForUserAsync(user);
+
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    // After user is created, seed their default categories
-                    await CreateDefaultCategoriesForUserAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
@@ -166,7 +139,7 @@ namespace FinanceManager.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return RedirectToAction("Create", "AccountSetup");
+                        return LocalRedirect(returnUrl);
                     }
                 }
                 foreach (var error in result.Errors)
@@ -175,38 +148,7 @@ namespace FinanceManager.Areas.Identity.Pages.Account
                 }
             }
 
-            // If we got this far, something failed, redisplay form
             return Page();
-        }
-
-        private async Task CreateDefaultCategoriesForUserAsync(ApplicationUser user)
-        {
-            var expenseCategories = new List<Category>
-        {
-            new Category { Name = "Food and Supermarkets", Type = CategoryType.Expense, Color = "#FF6384", ApplicationUserId = user.Id },
-            new Category { Name = "Cafes and Restaurants", Type = CategoryType.Expense, Color = "#36A2EB", ApplicationUserId = user.Id },
-            new Category { Name = "Utilities", Type = CategoryType.Expense, Color = "#FFCE56", ApplicationUserId = user.Id },
-            new Category { Name = "Transport", Type = CategoryType.Expense, Color = "#4BC0C0", ApplicationUserId = user.Id },
-            new Category { Name = "Health and Beauty", Type = CategoryType.Expense, Color = "#9966FF", ApplicationUserId = user.Id },
-            new Category { Name = "Clothing and Footwear", Type = CategoryType.Expense, Color = "#FF9F40", ApplicationUserId = user.Id },
-            new Category { Name = "Home and Household", Type = CategoryType.Expense, Color = "#C9CBCF", ApplicationUserId = user.Id },
-            new Category { Name = "Other", Type = CategoryType.Expense, Color = "#808080", ApplicationUserId = user.Id }
-        };
-
-            var incomeCategories = new List<Category>
-    {
-        new Category { Name = "Salary", Type = CategoryType.Income, Color = "#28A745", ApplicationUserId = user.Id },
-        new Category { Name = "Card Transfer", Type = CategoryType.Income, Color = "#17A2B8", ApplicationUserId = user.Id },
-        new Category { Name = "Gift", Type = CategoryType.Income, Color = "#FFC107", ApplicationUserId = user.Id },
-        new Category { Name = "Interest", Type = CategoryType.Income, Color = "#6F42C1", ApplicationUserId = user.Id },
-        new Category { Name = "Credit", Type = CategoryType.Income, Color = "#FD7E14", ApplicationUserId = user.Id },
-        new Category { Name = "Initial Balance", Type = CategoryType.Income, Color = "#20C997", ApplicationUserId = user.Id },
-        new Category { Name = "Other", Type = CategoryType.Income, Color = "#808080", ApplicationUserId = user.Id }
-    };
-
-            await _context.Categories.AddRangeAsync(expenseCategories);
-            await _context.Categories.AddRangeAsync(incomeCategories);
-            await _context.SaveChangesAsync();
         }
 
         private ApplicationUser CreateUser()
@@ -230,6 +172,29 @@ namespace FinanceManager.Areas.Identity.Pages.Account
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
             return (IUserEmailStore<ApplicationUser>)_userStore;
+        }
+
+        private async Task CreateDefaultCategoriesForUserAsync(ApplicationUser user)
+        {
+            var expenseCategories = new List<Category>
+            {
+                new Category { Name = "Food and Supermarkets", Type = CategoryType.Expense, Color = "#FF6384", ApplicationUserId = user.Id },
+                new Category { Name = "Cafes and Restaurants", Type = CategoryType.Expense, Color = "#36A2EB", ApplicationUserId = user.Id },
+                new Category { Name = "Utilities", Type = CategoryType.Expense, Color = "#FFCE56", ApplicationUserId = user.Id },
+                new Category { Name = "Other", Type = CategoryType.Expense, Color = "#808080", ApplicationUserId = user.Id }
+            };
+
+            var incomeCategories = new List<Category>
+            {
+                new Category { Name = "Salary", Type = CategoryType.Income, Color = "#28A745", ApplicationUserId = user.Id },
+                new Category { Name = "Gift", Type = CategoryType.Income, Color = "#17A2B8", ApplicationUserId = user.Id },
+                new Category { Name = "Initial Balance", Type = CategoryType.Income, Color = "#20C997", ApplicationUserId = user.Id },
+                new Category { Name = "Other", Type = CategoryType.Income, Color = "#808080", ApplicationUserId = user.Id }
+            };
+
+            await _context.Categories.AddRangeAsync(expenseCategories);
+            await _context.Categories.AddRangeAsync(incomeCategories);
+            await _context.SaveChangesAsync();
         }
     }
 }

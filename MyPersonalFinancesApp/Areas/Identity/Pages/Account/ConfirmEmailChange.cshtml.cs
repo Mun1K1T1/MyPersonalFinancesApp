@@ -2,18 +2,18 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using FinanceManager.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using FinanceManager.Models;
 
 namespace FinanceManager.Areas.Identity.Pages.Account
 {
+    [Authorize]
     public class ConfirmEmailChangeModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -25,10 +25,6 @@ namespace FinanceManager.Areas.Identity.Pages.Account
             _signInManager = signInManager;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
@@ -45,6 +41,12 @@ namespace FinanceManager.Areas.Identity.Pages.Account
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
 
+            if (user.Id != _userManager.GetUserId(User))
+            {
+                StatusMessage = "Error: Mismatched user.";
+                return RedirectToPage("/Index");
+            }
+
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ChangeEmailAsync(user, email, code);
             if (!result.Succeeded)
@@ -53,8 +55,6 @@ namespace FinanceManager.Areas.Identity.Pages.Account
                 return Page();
             }
 
-            // In our UI email and user name are one and the same, so when we update the email
-            // we need to update the user name.
             var setUserNameResult = await _userManager.SetUserNameAsync(user, email);
             if (!setUserNameResult.Succeeded)
             {
@@ -62,9 +62,14 @@ namespace FinanceManager.Areas.Identity.Pages.Account
                 return Page();
             }
 
+            // 1. Refresh the authentication cookie with the new user details.
             await _signInManager.RefreshSignInAsync(user);
+
+            // 2. Set a success message that will be displayed on the next page.
             StatusMessage = "Thank you for confirming your email change.";
-            return Page();
+
+            // 3. Force a redirect to the homepage. This new request will use the new cookie.
+            return RedirectToAction("Index", "Home");
         }
     }
 }

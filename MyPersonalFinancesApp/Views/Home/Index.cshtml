@@ -1,29 +1,34 @@
 ﻿@model FinanceManager.Models.DashboardViewModel
-@using System.Text.Json;
+@using System.Text.Json
+@using Microsoft.AspNetCore.Mvc.Localization
+@using FinanceManager.Models.Resources
+@using Microsoft.Extensions.Localization
+
+@inject IViewLocalizer Localizer
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = Localizer["Dashboard"];
 }
 
-<!-- MASTER FILTER FORM - RESTORED and CORRECTED -->
+<!-- MASTER FILTER FORM -->
 <form asp-action="Index" method="get" id="filterForm">
     <!-- Account Filter Dropdown -->
     <div class="row justify-content-center mb-4">
         <div class="col-md-4">
             <div class="input-group">
-                <label class="input-group-text">Account:</label>
-                <!-- NOTE: The form submission is handled by JavaScript now -->
+                <label class="input-group-text">@Localizer["Account"]:</label>
                 <select name="accountId" asp-for="SelectedAccountId" class="form-select" id="accountIdSelect">
-                    <option value="">General (All Accounts)</option>
+                    <option value="">@Localizer["GeneralAll"]</option>
                     @if (Model.Accounts != null)
                     {
                         @foreach (var account in Model.Accounts)
                         {
-                            <!-- THIS IS THE CORRECTED LINE - it's much simpler and null-safe -->
                             <option value="@account.Value">@account.Text</option>
                         }
                     }
                     <option disabled>------------------</option>
-                    <option value="create_new">+ New Account</option>
+                    <option value="create_new">@Localizer["CreateNewAcc"]</option>
                 </select>
             </div>
         </div>
@@ -33,13 +38,12 @@
     <div class="dashboard-box text-center mb-4">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h5 class="text-muted">CURRENT AMOUNT</h5>
+                <h5 class="text-muted">@Localizer["CurrentAmount"]</h5>
                 <h2>@Model.CurrentAmount.ToString("C")</h2>
             </div>
             <div class="col-md-4">
                 <div class="input-group">
-                    <label class="input-group-text">Period:</label>
-                    <!-- NOTE: name attribute is added -->
+                    <label class="input-group-text">@Localizer["Period"]:</label>
                     <select name="selectedTimePeriod" asp-for="SelectedTimePeriod" asp-items="Html.GetEnumSelectList<TimePeriod>()" class="form-select" id="timePeriodSelect"></select>
                 </div>
             </div>
@@ -50,18 +54,15 @@
 <div class="row">
     <!-- WEST SIDE: Expenses -->
     <div class="col-md-6 mb-4">
-        <!-- Chart Box for Expenses -->
         <div class="dashboard-box chart-box mb-3">
-            <h3 class="text-center">Expenses</h3>
+            <h3 class="text-center">@SharedLocalizer["Expenses"]</h3>
             <div class="pie-chart-container">
                 <canvas id="expenseChart"></canvas>
             </div>
             <a asp-controller="Transaction" asp-action="Create" asp-route-type="Expense" class="create-transaction-btn">+</a>
         </div>
-
-        <!-- History Box for Expenses -->
         <div class="dashboard-box">
-            <h5 class="mt-1">Recent Expenses</h5>
+            <h5 class="mt-1">@Localizer["RecentExpenses"]</h5>
             <a asp-controller="Transaction" asp-action="Index" asp-route-type="Expense" class="stretched-link"></a>
             @if (Model.RecentExpenses.Any())
             {
@@ -77,12 +78,12 @@
             }
             else
             {
-                <p class="text-center text-muted mt-3">No expenses found for this period.</p>
+                <p class="text-center text-muted mt-3">@Localizer["NoExpensesFound"]</p>
             }
             @if (Model.TotalExpenseCountForPeriod > 20)
             {
                 <div class="text-center text-muted mt-2">
-                    ... and @(Model.TotalExpenseCountForPeriod - 20) more
+                    @Localizer.GetString("AndMore", Model.TotalExpenseCountForPeriod - 20)
                 </div>
             }
         </div>
@@ -90,18 +91,15 @@
 
     <!-- EAST SIDE: Income -->
     <div class="col-md-6 mb-4">
-        <!-- Chart Box for Income -->
         <div class="dashboard-box chart-box mb-3">
-            <h3 class="text-center">Income</h3>
+            <h3 class="text-center">@SharedLocalizer["Income"]</h3>
             <div class="pie-chart-container">
                 <canvas id="incomeChart"></canvas>
             </div>
             <a asp-controller="Transaction" asp-action="Create" asp-route-type="Income" class="create-transaction-btn">+</a>
         </div>
-
-        <!-- History Box for Income -->
         <div class="dashboard-box">
-            <h5 class="mt-1">Recent Income</h5>
+            <h5 class="mt-1">@Localizer["RecentIncome"]</h5>
             <a asp-controller="Transaction" asp-action="Index" asp-route-type="Income" class="stretched-link"></a>
             @if (Model.RecentIncomes.Any())
             {
@@ -117,12 +115,12 @@
             }
             else
             {
-                <p class="text-center text-muted mt-3">No income found for this period.</p>
+                <p class="text-center text-muted mt-3">@Localizer["NoIncomeFound"]</p>
             }
             @if (Model.TotalIncomeCountForPeriod > 20)
             {
                 <div class="text-center text-muted mt-2">
-                    ... and @(Model.TotalIncomeCountForPeriod - 20) more
+                    @Localizer.GetString("AndMore", Model.TotalIncomeCountForPeriod - 20)
                 </div>
             }
         </div>
@@ -192,7 +190,7 @@
         // --- MAIN SCRIPT EXECUTION on page load ---
         document.addEventListener('DOMContentLoaded', function () {
 
-            // --- I. FORM FILTER HANDLING ---
+            // --- FORM FILTER HANDLING ---
             const accountSelect = document.getElementById('accountIdSelect');
             const timePeriodSelect = document.getElementById('timePeriodSelect');
             const filterForm = document.getElementById('filterForm');
@@ -212,8 +210,7 @@
                 });
             }
 
-            // --- II. CHART RENDERING ---
-            // Use /@Html/.Raw to inject the JSON directly as a JavaScript object
+            // --- CHART RENDERING ---
             const expenseData = @Html.Raw(JsonSerializer.Serialize(Model.ExpenseChartData));
             if (expenseData && expenseData.Values.length > 0) {
                 const defaultExpenseText = expenseData.Labels[0];
