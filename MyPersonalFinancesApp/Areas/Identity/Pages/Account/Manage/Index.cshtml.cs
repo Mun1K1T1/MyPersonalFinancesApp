@@ -77,8 +77,7 @@ namespace FinanceManager.Areas.Identity.Pages.Account.Manage
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Patronymic = user.Patronymic,
-                PhoneNumber = phoneNumber
+                Patronymic = user.Patronymic
             };
         }
 
@@ -119,7 +118,6 @@ namespace FinanceManager.Areas.Identity.Pages.Account.Manage
                 }
             }
 
-            // Update the name fields before saving
             if (Input.FirstName != user.FirstName)
             {
                 user.FirstName = Input.FirstName;
@@ -133,7 +131,6 @@ namespace FinanceManager.Areas.Identity.Pages.Account.Manage
                 user.Patronymic = Input.Patronymic;
             }
 
-            // Save all changes to the database
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
