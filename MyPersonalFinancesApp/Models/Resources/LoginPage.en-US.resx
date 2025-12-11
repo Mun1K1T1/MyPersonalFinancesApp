@@ -117,28 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BackToDashboard" xml:space="preserve">
-    <value>Back to Dashboard</value>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
   </data>
-  <data name="Categories" xml:space="preserve">
-    <value>Categories</value>
+  <data name="ForgotPass" xml:space="preserve">
+    <value>Forgot your password?</value>
   </data>
-  <data name="CreateTransaction" xml:space="preserve">
-    <value>Create Transaction</value>
+  <data name="LogIn" xml:space="preserve">
+    <value>Log in</value>
   </data>
-  <data name="Expenses" xml:space="preserve">
-    <value>Expenses</value>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
   </data>
-  <data name="Income" xml:space="preserve">
-    <value>Income</value>
+  <data name="RegisterNew" xml:space="preserve">
+    <value>Register as a new user</value>
   </data>
-  <data name="Profile" xml:space="preserve">
-    <value>Profile</value>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Remember me?</value>
   </data>
-  <data name="ProfileHandling" xml:space="preserve">
-    <value>Profile Handling</value>
+  <data name="ResendConfirm" xml:space="preserve">
+    <value>Resend email confirmation</value>
   </data>
-  <data name="Security" xml:space="preserve">
-    <value>Security</value>
+  <data name="UseAnotherService" xml:space="preserve">
+    <value>Use another service to log in.</value>
+  </data>
+  <data name="UseLocal" xml:space="preserve">
+    <value>Use a local account to log in.</value>
   </data>
 </root>

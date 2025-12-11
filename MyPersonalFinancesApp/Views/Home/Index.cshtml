@@ -1,14 +1,12 @@
 ﻿@model FinanceManager.Models.DashboardViewModel
 @using System.Text.Json
-@using Microsoft.AspNetCore.Mvc.Localization
-@using FinanceManager.Models.Resources
-@using Microsoft.Extensions.Localization
-
-@inject IViewLocalizer Localizer
-@inject IStringLocalizer<SharedResource> SharedLocalizer
 
 @{
-    ViewData["Title"] = Localizer["Dashboard"];
+    // Створюємо екземпляри локалізаторів для цієї сторінки та для спільних рядків
+    var homepageLocalizer = LocalizerFactory.Create("Homepage", "FinanceManager");
+    var sharedLocalizer = LocalizerFactory.Create("SharedStrings", "FinanceManager");
+
+    ViewData["Title"] = homepageLocalizer["Dashboard"];
 }
 
 <!-- MASTER FILTER FORM -->
@@ -17,9 +15,9 @@
     <div class="row justify-content-center mb-4">
         <div class="col-md-4">
             <div class="input-group">
-                <label class="input-group-text">@Localizer["Account"]:</label>
+                <label class="input-group-text">@homepageLocalizer["Account"]:</label>
                 <select name="accountId" asp-for="SelectedAccountId" class="form-select" id="accountIdSelect">
-                    <option value="">@Localizer["GeneralAll"]</option>
+                    <option value="">@homepageLocalizer["GeneralAll"]</option>
                     @if (Model.Accounts != null)
                     {
                         @foreach (var account in Model.Accounts)
@@ -28,7 +26,7 @@
                         }
                     }
                     <option disabled>------------------</option>
-                    <option value="create_new">@Localizer["CreateNewAcc"]</option>
+                    <option value="create_new">@homepageLocalizer["CreateNewAcc"]</option>
                 </select>
             </div>
         </div>
@@ -38,12 +36,12 @@
     <div class="dashboard-box text-center mb-4">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h5 class="text-muted">@Localizer["CurrentAmount"]</h5>
+                <h5 class="text-muted">@homepageLocalizer["CurrentAmount"]</h5>
                 <h2>@Model.CurrentAmount.ToString("C")</h2>
             </div>
             <div class="col-md-4">
                 <div class="input-group">
-                    <label class="input-group-text">@Localizer["Period"]:</label>
+                    <label class="input-group-text">@homepageLocalizer["Period"]:</label>
                     <select name="selectedTimePeriod" asp-for="SelectedTimePeriod" asp-items="Html.GetEnumSelectList<TimePeriod>()" class="form-select" id="timePeriodSelect"></select>
                 </div>
             </div>
@@ -55,14 +53,14 @@
     <!-- WEST SIDE: Expenses -->
     <div class="col-md-6 mb-4">
         <div class="dashboard-box chart-box mb-3">
-            <h3 class="text-center">@SharedLocalizer["Expenses"]</h3>
+            <h3 class="text-center">@sharedLocalizer["Expenses"]</h3>
             <div class="pie-chart-container">
                 <canvas id="expenseChart"></canvas>
             </div>
             <a asp-controller="Transaction" asp-action="Create" asp-route-type="Expense" class="create-transaction-btn">+</a>
         </div>
         <div class="dashboard-box">
-            <h5 class="mt-1">@Localizer["RecentExpenses"]</h5>
+            <h5 class="mt-1">@homepageLocalizer["RecentExpenses"]</h5>
             <a asp-controller="Transaction" asp-action="Index" asp-route-type="Expense" class="stretched-link"></a>
             @if (Model.RecentExpenses.Any())
             {
@@ -78,12 +76,12 @@
             }
             else
             {
-                <p class="text-center text-muted mt-3">@Localizer["NoExpensesFound"]</p>
+                <p class="text-center text-muted mt-3">@homepageLocalizer["NoExpensesFound"]</p>
             }
             @if (Model.TotalExpenseCountForPeriod > 20)
             {
                 <div class="text-center text-muted mt-2">
-                    @Localizer.GetString("AndMore", Model.TotalExpenseCountForPeriod - 20)
+                    @homepageLocalizer.GetString("AndMore", Model.TotalExpenseCountForPeriod - 20)
                 </div>
             }
         </div>
@@ -92,14 +90,14 @@
     <!-- EAST SIDE: Income -->
     <div class="col-md-6 mb-4">
         <div class="dashboard-box chart-box mb-3">
-            <h3 class="text-center">@SharedLocalizer["Income"]</h3>
+            <h3 class="text-center">@sharedLocalizer["Income"]</h3>
             <div class="pie-chart-container">
                 <canvas id="incomeChart"></canvas>
             </div>
             <a asp-controller="Transaction" asp-action="Create" asp-route-type="Income" class="create-transaction-btn">+</a>
         </div>
         <div class="dashboard-box">
-            <h5 class="mt-1">@Localizer["RecentIncome"]</h5>
+            <h5 class="mt-1">@homepageLocalizer["RecentIncome"]</h5>
             <a asp-controller="Transaction" asp-action="Index" asp-route-type="Income" class="stretched-link"></a>
             @if (Model.RecentIncomes.Any())
             {
@@ -115,17 +113,18 @@
             }
             else
             {
-                <p class="text-center text-muted mt-3">@Localizer["NoIncomeFound"]</p>
+                <p class="text-center text-muted mt-3">@homepageLocalizer["NoIncomeFound"]</p>
             }
             @if (Model.TotalIncomeCountForPeriod > 20)
             {
                 <div class="text-center text-muted mt-2">
-                    @Localizer.GetString("AndMore", Model.TotalIncomeCountForPeriod - 20)
+                    @homepageLocalizer.GetString("AndMore", Model.TotalIncomeCountForPeriod - 20)
                 </div>
             }
         </div>
     </div>
 </div>
+
 
 @section Scripts {
     <script>

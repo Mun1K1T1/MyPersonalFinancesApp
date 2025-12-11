@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Resources\NewFolder\**" />
+    <Content Remove="Models\Resources\NewFolder\**" />
+    <EmbeddedResource Remove="Models\Resources\NewFolder\**" />
+    <None Remove="Models\Resources\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.11" />
@@ -22,7 +29,6 @@
 
   <ItemGroup>
     <Folder Include="Data\Services\" />
-    <Folder Include="Models\Resources\NewFolder\" />
   </ItemGroup>
 
 </Project>

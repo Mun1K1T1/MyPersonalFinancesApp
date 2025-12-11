@@ -117,37 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Account" xml:space="preserve">
-    <value>Рахунок</value>
+  <data name="BackToDashboard" xml:space="preserve">
+    <value>Назад на дашборд</value>
   </data>
-  <data name="AndMore" xml:space="preserve">
-    <value>... та ще {0}</value>
+  <data name="Categories" xml:space="preserve">
+    <value>Категорії</value>
   </data>
-  <data name="CreateNewAcc" xml:space="preserve">
-    <value>+ Новий рахунок</value>
+  <data name="Expenses" xml:space="preserve">
+    <value>Витрати</value>
   </data>
-  <data name="CurrentAmount" xml:space="preserve">
-    <value>ПОТОЧНИЙ БАЛАНС</value>
+  <data name="Hello" xml:space="preserve">
+    <value>Вітаю, {0}!</value>
   </data>
-  <data name="Dashboard" xml:space="preserve">
-    <value>Інформаційна панель</value>
+  <data name="Income" xml:space="preserve">
+    <value>Доходи</value>
   </data>
-  <data name="GeneralAll" xml:space="preserve">
-    <value>Загальний (Всі рахунки)</value>
+  <data name="Language" xml:space="preserve">
+    <value>Мова</value>
   </data>
-  <data name="NoExpensesFound" xml:space="preserve">
-    <value>За цей період витрат не знайдено.</value>
+  <data name="LogIn" xml:space="preserve">
+    <value>Вхід</value>
   </data>
-  <data name="NoIncomeFound" xml:space="preserve">
-    <value>За цей період доходів не знайдено.</value>
+  <data name="Logout" xml:space="preserve">
+    <value>Вийти</value>
   </data>
-  <data name="Period" xml:space="preserve">
-    <value>Період</value>
+  <data name="Profile" xml:space="preserve">
+    <value>Профіль</value>
   </data>
-  <data name="RecentExpenses" xml:space="preserve">
-    <value>Останні витрати</value>
+  <data name="ProfileHandling" xml:space="preserve">
+    <value>Керування акаунтом</value>
   </data>
-  <data name="RecentIncome" xml:space="preserve">
-    <value>Останні доходи</value>
+  <data name="Register" xml:space="preserve">
+    <value>Реєстрація</value>
+  </data>
+  <data name="Security" xml:space="preserve">
+    <value>Безпека</value>
   </data>
 </root>

@@ -117,28 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BackToDashboard" xml:space="preserve">
-    <value>Назад на дашборд</value>
+  <data name="Account" xml:space="preserve">
+    <value>Рахунок</value>
   </data>
-  <data name="Categories" xml:space="preserve">
-    <value>Категорії</value>
+  <data name="AndMore" xml:space="preserve">
+    <value>... та ще {0}</value>
   </data>
-  <data name="CreateTransaction" xml:space="preserve">
-    <value>Створити транзакцію</value>
+  <data name="CreateNewAcc" xml:space="preserve">
+    <value>+ Новий рахунок</value>
   </data>
-  <data name="Expenses" xml:space="preserve">
-    <value>Витрати</value>
+  <data name="CurrentAmount" xml:space="preserve">
+    <value>ПОТОЧНИЙ БАЛАНС</value>
   </data>
-  <data name="Income" xml:space="preserve">
-    <value>Доходи</value>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Інформаційна панель</value>
   </data>
-  <data name="Profile" xml:space="preserve">
-    <value>Профіль</value>
+  <data name="GeneralAll" xml:space="preserve">
+    <value>Загальний (Всі рахунки</value>
   </data>
-  <data name="ProfileHandling" xml:space="preserve">
-    <value>Керування акаунтом</value>
+  <data name="NoExpensesFound" xml:space="preserve">
+    <value>За цей період витрат не знайдено.</value>
   </data>
-  <data name="Security" xml:space="preserve">
-    <value>Безпека</value>
+  <data name="NoIncomeFound" xml:space="preserve">
+    <value>За цей період доходів не знайдено.</value>
+  </data>
+  <data name="Period" xml:space="preserve">
+    <value>Період</value>
+  </data>
+  <data name="RecentExpenses" xml:space="preserve">
+    <value>Останні витрати</value>
+  </data>
+  <data name="RecentIncome" xml:space="preserve">
+    <value>Останні доходи</value>
   </data>
 </root>

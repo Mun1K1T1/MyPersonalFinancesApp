@@ -23,7 +23,6 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 
 builder.Services.AddControllersWithViews(options =>
 {
-    // This line registers the filter to be used on every controller action
     options.Filters.Add<EnsureUserHasAccountFilter>();
 })
 .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
