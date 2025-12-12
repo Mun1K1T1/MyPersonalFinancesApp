@@ -117,55 +117,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="... (your existing keys) ..." xml:space="preserve">
-    <value>...</value>
+  <data name="Active" xml:space="preserve">
+    <value>Активний</value>
   </data>
-  <data name="BackToDashboard" xml:space="preserve">
-    <value>Назад на дашборд</value>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
   </data>
-  <data name="Categories" xml:space="preserve">
-    <value>Категорії</value>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Скасовано</value>
   </data>
-  <data name="Expenses" xml:space="preserve">
-    <value>Витрати</value>
+  <data name="ColAmount" xml:space="preserve">
+    <value>Сума</value>
   </data>
-  <data name="Hello" xml:space="preserve">
-    <value>Вітаю, {0}!</value>
+  <data name="ColFrequency" xml:space="preserve">
+    <value>Частота</value>
   </data>
-  <data name="Income" xml:space="preserve">
-    <value>Доходи</value>
+  <data name="ColName" xml:space="preserve">
+    <value>Назва</value>
   </data>
-  <data name="Language" xml:space="preserve">
-    <value>Мова</value>
+  <data name="ColNextRun" xml:space="preserve">
+    <value>Наступний запуск</value>
   </data>
-  <data name="LogIn" xml:space="preserve">
-    <value>Вхід</value>
+  <data name="ColStatus" xml:space="preserve">
+    <value>Статус</value>
   </data>
-  <data name="Logout" xml:space="preserve">
-    <value>Вийти</value>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Ви впевнені, що хочете назавжди видалити цей платіж?</value>
   </data>
-  <data name="Profile" xml:space="preserve">
-    <value>Профіль</value>
+  <data name="CreateNew" xml:space="preserve">
+    <value>Створити новий</value>
   </data>
-  <data name="ProfileHandling" xml:space="preserve">
-    <value>Керування акаунтом</value>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
   </data>
-  <data name="Register" xml:space="preserve">
-    <value>Реєстрація</value>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
   </data>
-  <data name="Security" xml:space="preserve">
-    <value>Безпека</value>
+  <data name="Every" xml:space="preserve">
+    <value>Кожні {0} {1}</value>
   </data>
-  <data name="The password and confirmation password do not match." xml:space="preserve">
-    <value>Пароль та його підтвердження не співпадають.</value>
+  <data name="NoPayments" xml:space="preserve">
+    <value>У вас немає запланованих регулярних платежів.</value>
   </data>
-  <data name="The {0} field is required." xml:space="preserve">
-    <value>Поле '{0}' є обов'язковим.</value>
+  <data name="Reinstate" xml:space="preserve">
+    <value>Відновити</value>
   </data>
-  <data name="The {0} must be at least {2} and at max {1} characters long." xml:space="preserve">
-    <value>Поле '{0}' повинно містити від {2} до {1} символів.</value>
-  </data>
-  <data name="RegularPayments" xml:space="preserve">
+  <data name="Title" xml:space="preserve">
     <value>Регулярні платежі</value>
   </data>
 </root>

@@ -1,7 +1,12 @@
 ﻿@page
 @model RegularPaymentsModel
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<RegularPaymentsPage> Localizer
+@inject IStringLocalizer<SharedStrings> SharedLocalizer
+@inject IStringLocalizer<CategoriesDefault> CategoryLocalizer
+
 @{
-    ViewData["Title"] = "Regular Payments";
+    ViewData["Title"] = Localizer["Title"];
 
     string FormatCurrency(decimal amount, Currency currency)
     {
@@ -14,67 +19,73 @@
         };
         return $"{symbol}{amount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)}";
     }
+
+    string LocalizeCategory(string categoryName)
+    {
+        if (string.IsNullOrEmpty(categoryName)) { return ""; }
+        var localized = CategoryLocalizer[categoryName.Replace(" ", "_")];
+        return localized.ResourceNotFound ? categoryName : localized;
+    }
 }
 
 <!-- Back Button -->
 <div class="mb-3">
-    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; Back to Dashboard</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; @SharedLocalizer["BackToDashboard"]</a>
 </div>
 
 <partial name="_StatusMessage" model="Model.StatusMessage" />
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>@ViewData["Title"]</h3>
-    <a asp-page="./CreateRegularPayment" class="btn btn-primary">Create New</a>
+    <a asp-page="./CreateRegularPayment" class="btn btn-primary">@Localizer["CreateNew"]</a>
 </div>
 
 <div class="table-responsive">
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Next Run</th>
-                <th>Amount</th>
-                <th>Frequency</th>
-                <th>Status</th>
+                <th>@Localizer["ColName"]</th>
+                <th>@Localizer["ColNextRun"]</th>
+                <th>@Localizer["ColAmount"]</th>
+                <th>@Localizer["ColFrequency"]</th>
+                <th>@Localizer["ColStatus"]</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var p in Model.Payments)
+            @foreach (var vm in Model.Payments)
             {
                 <tr>
-                    <td>@p.Name <br /><small class="text-muted">@p.Account.Name / @p.Category.Name</small></td>
-                    <td>@p.NextRunDate.ToString("g")</td>
-                    <td class="@(p.Type == CategoryType.Income ? "text-success" : "text-danger")">
-                        <strong>@(p.Type == CategoryType.Income ? "+" : "-")@FormatCurrency(p.Amount, p.Account.Currency)</strong>
+                    <td>@vm.Payment.Name <br /><small class="text-muted">@vm.Payment.Account.Name / @LocalizeCategory(vm.Payment.Category.Name)</small></td>
+                    <td>@vm.Payment.NextRunDate.ToString("g")</td>
+                    <td class="@(vm.Payment.Type == CategoryType.Income ? "text-success" : "text-danger")">
+                        <strong>@(vm.Payment.Type == CategoryType.Income ? "+" : "-")@FormatCurrency(vm.Payment.Amount, vm.Payment.Account.Currency)</strong>
                     </td>
-                    <td>Every @p.Interval @p.FrequencyUnit.ToString()s</td>
+                    <td>@vm.FormattedFrequency</td>
                     <td>
-                        @if (p.IsActive)
+                        @if (vm.Payment.IsActive)
                         {
-                            <span class="badge bg-success">Active</span>
+                            <span class="badge bg-success">@Localizer["Active"]</span>
                         }
                         else
                         {
-
-                            <span class="badge bg-secondary">Cancelled</span>
+                            <span class="badge bg-secondary">@Localizer["Cancelled"]</span>
                         }
                     </td>
                     <td class="text-end">
-                        @if (p.StartDate >= DateTime.Today)
+                        @if (vm.Payment.StartDate >= DateTime.Today)
                         {
-                            <a asp-page="./EditRegularPayment" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <a asp-page="./EditRegularPayment" asp-route-id="@vm.Payment.Id" class="btn btn-sm btn-outline-secondary">@Localizer["Edit"]</a>
                         }
 
-                        <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@p.Id" class="d-inline ms-1">
-                            <button type="submit" class="btn btn-sm btn-outline-warning">@(p.IsActive ? "Cancel" : "Reinstate")</button>
+                        <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@vm.Payment.Id" class="d-inline ms-1">
+                            <button type="submit" class="btn btn-sm btn-outline-warning">@(vm.Payment.IsActive? Localizer["Cancel"] : Localizer["Reinstate"])</button>
                         </form>
 
-                        @if (p.StartDate >= DateTime.Today)
+                        @if (vm.Payment.StartDate >= DateTime.Today)
                         {
-                            <form method="post" asp-page-handler="Delete" asp-route-id="@p.Id" class="d-inline ms-1">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to permanently delete this payment?');">Delete</button>
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@vm.Payment.Id" class="d-inline ms-1">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('@Localizer["ConfirmDelete"]');">@Localizer["Delete"]</button>
                             </form>
                         }
                     </td>
@@ -83,7 +94,7 @@
             @if (!Model.Payments.Any())
             {
                 <tr>
-                    <td colspan="6" class="text-center text-muted">You have no regular payments scheduled.</td>
+                    <td colspan="6" class="text-center text-muted">@Localizer["NoPayments"]</td>
                 </tr>
             }
         </tbody>

@@ -153,6 +153,9 @@
   <data name="Register" xml:space="preserve">
     <value>Register</value>
   </data>
+  <data name="RegularPayments" xml:space="preserve">
+    <value>Regular Payments</value>
+  </data>
   <data name="Security" xml:space="preserve">
     <value>Security</value>
   </data>

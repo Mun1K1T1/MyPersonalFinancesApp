@@ -1,9 +1,11 @@
 using FinanceManager.Data;
 using FinanceManager.Models;
+using FinanceManager.Models.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,26 +16,46 @@ namespace FinanceManager.Areas.Identity.Pages.Account.Manage
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IStringLocalizer<Enums> _enumsLocalizer;
+        private readonly IStringLocalizer<RegularPaymentsPage> _pageLocalizer;
 
-        public RegularPaymentsModel(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public class PaymentViewModel
+        {
+            public RegularPayment Payment { get; set; }
+            public string FormattedFrequency { get; set; }
+        }
+
+        public RegularPaymentsModel(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            IStringLocalizer<Enums> enumsLocalizer,
+            IStringLocalizer<RegularPaymentsPage> pageLocalizer)
         {
             _context = context;
             _userManager = userManager;
+            _enumsLocalizer = enumsLocalizer;
+            _pageLocalizer = pageLocalizer;
         }
 
-        public List<RegularPayment> Payments { get; set; }
+        public List<PaymentViewModel> Payments { get; set; }
         [TempData]
         public string StatusMessage { get; set; }
 
         public async Task OnGetAsync()
         {
             var userId = _userManager.GetUserId(User);
-            Payments = await _context.RegularPayments
+            var paymentsFromDb = await _context.RegularPayments
                 .Where(rp => rp.ApplicationUserId == userId)
                 .Include(rp => rp.Account)
                 .Include(rp => rp.Category)
                 .OrderBy(rp => rp.NextRunDate)
                 .ToListAsync();
+
+            Payments = paymentsFromDb.Select(p => new PaymentViewModel
+            {
+                Payment = p,
+                FormattedFrequency = _pageLocalizer.GetString("Every", p.Interval, _enumsLocalizer[$"FrequencyUnit_{p.FrequencyUnit.ToString()}"])
+            }).ToList();
         }
 
         public async Task<IActionResult> OnPostToggleStatusAsync(int id)
@@ -57,7 +79,6 @@ namespace FinanceManager.Areas.Identity.Pages.Account.Manage
 
             if (payment != null)
             {
-                // Rule: Cannot delete a payment that has already started.
                 if (payment.StartDate <= System.DateTime.Today)
                 {
                     StatusMessage = "Error: Cannot delete a regular payment that has already started. You can cancel it instead.";
