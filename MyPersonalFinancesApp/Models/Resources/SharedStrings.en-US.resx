@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="... (your existing keys) ..." xml:space="preserve">
+    <value>...</value>
+  </data>
   <data name="BackToDashboard" xml:space="preserve">
     <value>Back to Dashboard</value>
   </data>
@@ -152,5 +155,14 @@
   </data>
   <data name="Security" xml:space="preserve">
     <value>Security</value>
+  </data>
+  <data name="The password and confirmation password do not match." xml:space="preserve">
+    <value>The password and confirmation password do not match.</value>
+  </data>
+  <data name="The {0} field is required." xml:space="preserve">
+    <value>The {0} field is required.</value>
+  </data>
+  <data name="The {0} must be at least {2} and at max {1} characters long." xml:space="preserve">
+    <value>The {0} must be at least {2} and at max {1} characters long.</value>
   </data>
 </root>

@@ -37,16 +37,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<EnsureUserHasAccountFilter>();
 })
 .AddViewLocalization()
-.AddDataAnnotationsLocalization(options =>
-{
-    options.DataAnnotationLocalizerProvider = (type, factory) =>
-        factory.Create(typeof(Enums));
-});
+.AddDataAnnotationsLocalization();
+
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
@@ -54,6 +52,7 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 
+// HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -78,6 +77,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
 app.Run();
