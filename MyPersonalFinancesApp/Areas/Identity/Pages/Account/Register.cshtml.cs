@@ -181,13 +181,20 @@ namespace FinanceManager.Areas.Identity.Pages.Account
                 new Category { Name = "Food and Supermarkets", Type = CategoryType.Expense, Color = "#FF6384", ApplicationUserId = user.Id },
                 new Category { Name = "Cafes and Restaurants", Type = CategoryType.Expense, Color = "#36A2EB", ApplicationUserId = user.Id },
                 new Category { Name = "Utilities", Type = CategoryType.Expense, Color = "#FFCE56", ApplicationUserId = user.Id },
+                new Category { Name = "Transport", Type = CategoryType.Expense, Color = "#4BC0C0", ApplicationUserId = user.Id },
+                new Category { Name = "Health and Beauty", Type = CategoryType.Expense, Color = "#9966FF", ApplicationUserId = user.Id },
+                new Category { Name = "Clothing and Footwear", Type = CategoryType.Expense, Color = "#FF9F40", ApplicationUserId = user.Id },
+                new Category { Name = "Home and Household", Type = CategoryType.Expense, Color = "#C9CBCF", ApplicationUserId = user.Id },
                 new Category { Name = "Other", Type = CategoryType.Expense, Color = "#808080", ApplicationUserId = user.Id }
             };
 
             var incomeCategories = new List<Category>
             {
                 new Category { Name = "Salary", Type = CategoryType.Income, Color = "#28A745", ApplicationUserId = user.Id },
-                new Category { Name = "Gift", Type = CategoryType.Income, Color = "#17A2B8", ApplicationUserId = user.Id },
+                new Category { Name = "Card Transfer", Type = CategoryType.Income, Color = "#17A2B8", ApplicationUserId = user.Id },
+                new Category { Name = "Gift", Type = CategoryType.Income, Color = "#FFC107", ApplicationUserId = user.Id },
+                new Category { Name = "Interest", Type = CategoryType.Income, Color = "#6F42C1", ApplicationUserId = user.Id },
+                new Category { Name = "Credit", Type = CategoryType.Income, Color = "#FD7E14", ApplicationUserId = user.Id },
                 new Category { Name = "Initial Balance", Type = CategoryType.Income, Color = "#20C997", ApplicationUserId = user.Id },
                 new Category { Name = "Other", Type = CategoryType.Income, Color = "#808080", ApplicationUserId = user.Id }
             };

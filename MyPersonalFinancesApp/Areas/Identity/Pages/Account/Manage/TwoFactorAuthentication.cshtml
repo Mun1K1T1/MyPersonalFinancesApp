@@ -1,10 +1,17 @@
 ﻿@page
 @using Microsoft.AspNetCore.Http.Features
 @model TwoFactorAuthenticationModel
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<TwoFactorAuthPage> Localizer
+
 @{
-    ViewData["Title"] = "Two-factor authentication (2FA)";
+    ViewData["Title"] = Localizer["Title"];
     ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
 }
+
+<div class="mb-3">
+    <a asp-page="./Security" class="btn btn-link text-secondary text-decoration-none">&lt; Back to Security Settings</a>
+</div>
 
 <partial name="_StatusMessage" for="StatusMessage" />
 <h3>@ViewData["Title"]</h3>
@@ -17,51 +24,51 @@
             if (Model.RecoveryCodesLeft == 0)
             {
                 <div class="alert alert-danger">
-                    <strong>You have no recovery codes left.</strong>
-                    <p>You must <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a> before you can log in with a recovery code.</p>
+                    <strong>@Localizer["NoCodesLeft"]</strong>
+                    <p>@Html.Raw(Localizer["MustGenerateNewCodes"])</p>
                 </div>
             }
             else if (Model.RecoveryCodesLeft == 1)
             {
                 <div class="alert alert-danger">
-                    <strong>You have 1 recovery code left.</strong>
-                    <p>You can <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
+                    <strong>@Localizer["OneCodeLeft"]</strong>
+                    <p>@Html.Raw(Localizer["YouCanGenerateNew"])</p>
                 </div>
             }
             else if (Model.RecoveryCodesLeft <= 3)
             {
                 <div class="alert alert-warning">
-                    <strong>You have @Model.RecoveryCodesLeft recovery codes left.</strong>
-                    <p>You should <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
+                    <strong>@Localizer.GetString("CodesLeft", Model.RecoveryCodesLeft)</strong>
+                    <p>@Html.Raw(Localizer["YouShouldGenerateNew"])</p>
                 </div>
             }
 
             if (Model.IsMachineRemembered)
             {
                 <form method="post" style="display: inline-block">
-                    <button type="submit" class="btn btn-primary">Forget this browser</button>
+                    <button type="submit" class="btn btn-primary">@Localizer["ForgetBrowserBtn"]</button>
                 </form>
             }
-            <a asp-page="./Disable2fa" class="btn btn-primary">Disable 2FA</a>
-            <a asp-page="./GenerateRecoveryCodes" class="btn btn-primary">Reset recovery codes</a>
+            <a asp-page="./Disable2fa" class="btn btn-primary">@Localizer["Disable2FABtn"]</a>
+            <a asp-page="./GenerateRecoveryCodes" class="btn btn-primary">@Localizer["ResetCodesBtn"]</a>
         }
 
-        <h4>Authenticator app</h4>
+        <h4>@Localizer["AuthAppTitle"]</h4>
         @if (!Model.HasAuthenticator)
         {
-            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">Add authenticator app</a>
+            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">@Localizer["AddAuthAppBtn"]</a>
         }
         else
         {
-            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">Set up authenticator app</a>
-            <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn-primary">Reset authenticator app</a>
+            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">@Localizer["SetupAuthAppBtn"]</a>
+            <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn-primary">@Localizer["ResetAuthAppBtn"]</a>
         }
     }
     else
     {
         <div class="alert alert-danger">
-            <strong>Privacy and cookie policy have not been accepted.</strong>
-            <p>You must accept the policy before you can enable two factor authentication.</p>
+            <strong>@Localizer["PolicyNotAccepted"]</strong>
+            <p>@Localizer["MustAcceptPolicy"]</p>
         </div>
     }
 }

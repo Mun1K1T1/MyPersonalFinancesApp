@@ -1,23 +1,20 @@
-﻿@using Microsoft.Extensions.Localization
-@inject IStringLocalizerFactory LocalizerFactory
-
-@{
-    var sharedLocalizer = LocalizerFactory.Create("SharedStrings", "FinanceManager");
-}
+﻿@using FinanceManager.Models.Resources
+@inject IStringLocalizer<SharedStrings> SharedLocalizer
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow">
             <div class="container-fluid">
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
+                <div class="ms-auto d-flex align-items-center">
                     <div class="me-3">
                         <partial name="_CultureSwitcher" />
                     </div>
@@ -35,9 +32,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

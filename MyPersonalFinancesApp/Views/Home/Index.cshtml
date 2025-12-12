@@ -1,34 +1,36 @@
 ﻿@model FinanceManager.Models.DashboardViewModel
 @using System.Text.Json
+@using FinanceManager.Models.Resources
+
+@inject IStringLocalizer<Homepage> HomepageLocalizer
+@inject IStringLocalizer<SharedStrings> SharedLocalizer
+@inject IStringLocalizer<CategoriesDefault> CategoryLocalizer
 
 @{
-    var homepageLocalizer = LocalizerFactory.Create("Homepage", "FinanceManager");
-    var sharedLocalizer = LocalizerFactory.Create("SharedStrings", "FinanceManager");
-    ViewData["Title"] = homepageLocalizer["Dashboard"];
+    ViewData["Title"] = HomepageLocalizer["Dashboard"];
+
+    string LocalizeCategory(string categoryName)
+    {
+        if (string.IsNullOrEmpty(categoryName)) { return ""; }
+        var localized = CategoryLocalizer[categoryName.Replace(" ", "_")];
+        return localized.ResourceNotFound ? categoryName : localized;
+    }
 
     string FormatCurrency(decimal amount, Currency currency)
     {
-        var symbol = currency switch
-        {
-            Currency.USD => "$",
-            Currency.EUR => "€",
-            Currency.UAH => "₴",
-            _ => ""
-        };
-
+        var symbol = currency switch { Currency.USD => "$", Currency.EUR => "€", Currency.UAH => "₴", _ => "" };
         return $"{symbol}{amount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)}";
     }
 }
 
 <!-- MASTER FILTER FORM -->
 <form asp-action="Index" method="get" id="filterForm">
-    <!-- Account Filter Dropdown -->
     <div class="row justify-content-center mb-4">
         <div class="col-md-4">
             <div class="input-group">
-                <label class="input-group-text">@homepageLocalizer["Account"]:</label>
+                <label class="input-group-text">@HomepageLocalizer["Account"]:</label>
                 <select name="accountId" asp-for="SelectedAccountId" class="form-select" id="accountIdSelect">
-                    <option value="">@homepageLocalizer["GeneralAll"]</option>
+                    <option value="">@HomepageLocalizer["GeneralAll"]</option>
                     @if (Model.Accounts != null)
                     {
                         @foreach (var account in Model.Accounts)
@@ -37,22 +39,20 @@
                         }
                     }
                     <option disabled>------------------</option>
-                    <option value="create_new">@homepageLocalizer["CreateNewAcc"]</option>
+                    <option value="create_new">@HomepageLocalizer["CreateNewAcc"]</option>
                 </select>
             </div>
         </div>
     </div>
-
-    <!-- CURRENT AMOUNT & TIME FILTER BOX -->
     <div class="dashboard-box text-center mb-4">
         <div class="row align-items-center">
             <div class="col-md-8">
-                <h5 class="text-muted">@homepageLocalizer["CurrentAmount"]</h5>
+                <h5 class="text-muted">@HomepageLocalizer["CurrentAmount"]</h5>
                 <h2>@FormatCurrency(Model.CurrentAmount, Model.RecentExpenses.FirstOrDefault()?.Account.Currency ?? (Model.RecentIncomes.FirstOrDefault()?.Account.Currency ?? Currency.UAH))</h2>
             </div>
             <div class="col-md-4">
                 <div class="input-group">
-                    <label class="input-group-text">@homepageLocalizer["Period"]:</label>
+                    <label class="input-group-text">@HomepageLocalizer["Period"]:</label>
                     <select name="selectedTimePeriod" asp-for="SelectedTimePeriod" asp-items="Model.TimePeriods" class="form-select" id="timePeriodSelect"></select>
                 </div>
             </div>
@@ -64,14 +64,14 @@
     <!-- WEST SIDE: Expenses -->
     <div class="col-md-6 mb-4">
         <div class="dashboard-box chart-box mb-3">
-            <h3 class="text-center">@sharedLocalizer["Expenses"]</h3>
+            <h3 class="text-center">@SharedLocalizer["Expenses"]</h3>
             <div class="pie-chart-container">
                 <canvas id="expenseChart"></canvas>
             </div>
             <a asp-controller="Transaction" asp-action="Create" asp-route-type="Expense" class="create-transaction-btn">+</a>
         </div>
         <div class="dashboard-box">
-            <h5 class="mt-1">@homepageLocalizer["RecentExpenses"]</h5>
+            <h5 class="mt-1">@HomepageLocalizer["RecentExpenses"]</h5>
             <a asp-controller="Transaction" asp-action="Index" asp-route-type="Expense" class="stretched-link"></a>
             @if (Model.RecentExpenses.Any())
             {
@@ -79,7 +79,7 @@
                     @foreach (var expense in Model.RecentExpenses)
                     {
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div><strong>@expense.Category.Name</strong><small class="d-block text-muted">@expense.Date.ToShortDateString()</small></div>
+                            <div><strong>@LocalizeCategory(expense.Category.Name)</strong><small class="d-block text-muted">@expense.Date.ToShortDateString()</small></div>
                             <span class="badge bg-danger rounded-pill">-@FormatCurrency(expense.Amount, expense.Account.Currency)</span>
                         </li>
                     }
@@ -87,12 +87,12 @@
             }
             else
             {
-                <p class="text-center text-muted mt-3">@homepageLocalizer["NoExpensesFound"]</p>
+                <p class="text-center text-muted mt-3">@HomepageLocalizer["NoExpensesFound"]</p>
             }
             @if (Model.TotalExpenseCountForPeriod > 20)
             {
                 <div class="text-center text-muted mt-2">
-                    @homepageLocalizer.GetString("AndMore", Model.TotalExpenseCountForPeriod - 20)
+                    @HomepageLocalizer.GetString("AndMore", Model.TotalExpenseCountForPeriod - 20)
                 </div>
             }
         </div>
@@ -101,14 +101,14 @@
     <!-- EAST SIDE: Income -->
     <div class="col-md-6 mb-4">
         <div class="dashboard-box chart-box mb-3">
-            <h3 class="text-center">@sharedLocalizer["Income"]</h3>
+            <h3 class="text-center">@SharedLocalizer["Income"]</h3>
             <div class="pie-chart-container">
                 <canvas id="incomeChart"></canvas>
             </div>
             <a asp-controller="Transaction" asp-action="Create" asp-route-type="Income" class="create-transaction-btn">+</a>
         </div>
         <div class="dashboard-box">
-            <h5 class="mt-1">@homepageLocalizer["RecentIncome"]</h5>
+            <h5 class="mt-1">@HomepageLocalizer["RecentIncome"]</h5>
             <a asp-controller="Transaction" asp-action="Index" asp-route-type="Income" class="stretched-link"></a>
             @if (Model.RecentIncomes.Any())
             {
@@ -116,7 +116,7 @@
                     @foreach (var income in Model.RecentIncomes)
                     {
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div><strong>@income.Category.Name</strong><small class="d-block text-muted">@income.Date.ToShortDateString()</small></div>
+                            <div><strong>@LocalizeCategory(income.Category.Name)</strong><small class="d-block text-muted">@income.Date.ToShortDateString()</small></div>
                             <span class="badge bg-success rounded-pill">+@FormatCurrency(income.Amount, income.Account.Currency)</span>
                         </li>
                     }
@@ -124,12 +124,12 @@
             }
             else
             {
-                <p class="text-center text-muted mt-3">@homepageLocalizer["NoIncomeFound"]</p>
+                <p class="text-center text-muted mt-3">@HomepageLocalizer["NoIncomeFound"]</p>
             }
             @if (Model.TotalIncomeCountForPeriod > 20)
             {
                 <div class="text-center text-muted mt-2">
-                    @homepageLocalizer.GetString("AndMore", Model.TotalIncomeCountForPeriod - 20)
+                    @HomepageLocalizer.GetString("AndMore", Model.TotalIncomeCountForPeriod - 20)
                 </div>
             }
         </div>

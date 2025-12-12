@@ -1,29 +1,30 @@
 ﻿@page
 @model ProfileHandlingModel
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<ProfileHandlingPage> Localizer
+@inject IStringLocalizer<SharedStrings> SharedLocalizer
+
 @{
-    var localizer = LocalizerFactory.Create("ProfileHandlingPage", "FinanceManager");
-    var sharedLocalizer = LocalizerFactory.Create("SharedStrings", "FinanceManager");
-    ViewData["Title"] = localizer["Title"];
+    ViewData["Title"] = Localizer["Title"];
 }
 
-<!-- Back Button -->
 <div class="mb-3">
-    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; @sharedLocalizer["BackToDashboard"]</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; @SharedLocalizer["BackToDashboard"]</a>
 </div>
 
 <h3>@ViewData["Title"]</h3>
-<p class="text-muted">@localizer["Subtitle"]</p>
+<p class="text-muted">@Localizer["Subtitle"]</p>
 
 <div class="list-group">
     <div class="list-group-item">
-        <h5 class="mb-1">@localizer["LogOutTitle"]</h5>
-        <p class="mb-1">@localizer["LogOutText"]</p>
+        <h5 class="mb-1">@Localizer["LogOutTitle"]</h5>
+        <p class="mb-1">@Localizer["LogOutText"]</p>
         <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
-            <button type="submit" class="btn btn-outline-primary mt-2">@sharedLocalizer["Logout"]</button>
+            <button type="submit" class="btn btn-outline-primary mt-2">@SharedLocalizer["Logout"]</button>
         </form>
     </div>
     <a asp-page="./PersonalData" class="list-group-item list-group-item-action list-group-item-danger">
-        <h5 class="mb-1">@localizer["DeleteTitle"]</h5>
-        <p class="mb-1">@localizer["DeleteText"]</p>
+        <h5 class="mb-1">@Localizer["DeleteTitle"]</h5>
+        <p class="mb-1">@Localizer["DeleteText"]</p>
     </a>
 </div>

@@ -1,9 +1,10 @@
 ﻿@page
 @model LoginModel
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<LoginPage> Localizer
 
 @{
-    var localizer = LocalizerFactory.Create("LoginPage", "FinanceManager");
-    ViewData["Title"] = localizer["LogIn"];
+    ViewData["Title"] = Localizer["LogIn"];
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -11,37 +12,37 @@
     <div class="col-md-4">
         <section>
             <form id="account" method="post">
-                <h2>@localizer["UseLocal"]</h2>
+                <h2>@Localizer["UseLocal"]</h2>
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label asp-for="Input.Email" class="form-label">@localizer["Email"]</label>
+                    <label asp-for="Input.Email" class="form-label">@Localizer["Email"]</label>
                     <span asp-validation-for="Input.Email" class="text-danger"></span>
                 </div>
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label asp-for="Input.Password" class="form-label">@localizer["Password"]</label>
+                    <label asp-for="Input.Password" class="form-label">@Localizer["Password"]</label>
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
                 <div class="checkbox mb-3">
                     <label asp-for="Input.RememberMe" class="form-label">
                         <input class="form-check-input" asp-for="Input.RememberMe" />
-                        @localizer["RememberMe"] @* Замість Html.DisplayNameFor *@
+                        @Localizer["RememberMe"]
                     </label>
                 </div>
                 <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">@localizer["LogIn"]</button>
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">@Localizer["LogIn"]</button>
                 </div>
                 <div class="mt-3">
                     <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">@localizer["ForgotPass"]</a>
+                        <a id="forgot-password" asp-page="./ForgotPassword">@Localizer["ForgotPass"]</a>
                     </p>
                     <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">@localizer["RegisterNew"]</a>
+                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">@Localizer["RegisterNew"]</a>
                     </p>
                     <p>
-                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">@localizer["ResendConfirm"]</a>
+                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">@Localizer["ResendConfirm"]</a>
                     </p>
                 </div>
             </form>
@@ -49,7 +50,7 @@
     </div>
     <div class="col-md-6 col-md-offset-2">
         <section>
-            <h3>@localizer["UseAnotherService"]</h3>
+            <h3>@Localizer["UseAnotherService"]</h3>
             <hr />
             @{
                 if ((Model.ExternalLogins?.Count ?? 0) == 0)

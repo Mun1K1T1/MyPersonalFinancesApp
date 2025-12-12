@@ -1,22 +1,23 @@
 ﻿@model FinanceManager.Models.TransactionCreateViewModel
-@{
-    var localizer = LocalizerFactory.Create("CreateTransactionPage", "FinanceManager");
-    var sharedLocalizer = LocalizerFactory.Create("SharedStrings", "FinanceManager");
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<CreateTransactionPage> Localizer
+@inject IStringLocalizer<SharedStrings> SharedLocalizer
 
-    var transactionTypeString = Model.TransactionType == "Expense" ? sharedLocalizer["Expenses"].Value.ToLower() : sharedLocalizer["Income"].Value.ToLower();
-    ViewData["Title"] = localizer.GetString("Create") + " " + transactionTypeString;
+@{
+    var transactionTypeString = Model.TransactionType == "Expense" ? SharedLocalizer["Expenses"].Value.ToLower() : SharedLocalizer["Income"].Value.ToLower();
+    ViewData["Title"] = Localizer.GetString("Create") + " " + transactionTypeString;
 }
 
 <div class="mb-3">
     <a href="javascript:history.back()" class="btn btn-link text-secondary text-decoration-none">
-        &lt; @localizer["Back"]
+        &lt; @Localizer["Back"]
     </a>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-md-8">
         <h1 class="text-center">@ViewData["Title"]</h1>
-        <h4 class="text-center text-muted">@localizer.GetString("LogNew", transactionTypeString)</h4>
+        <h4 class="text-center text-muted">@Localizer.GetString("LogNew", transactionTypeString)</h4>
         <hr />
 
         <form asp-action="Create" id="transaction-form">
@@ -27,14 +28,14 @@
                 <div class="col-md-6 mb-3">
                     <div class="form-floating">
                         <input asp-for="Amount" class="form-control" placeholder="0.00" />
-                        <label asp-for="Amount">@localizer["Amount"]</label>
+                        <label asp-for="Amount">@Localizer["Amount"]</label>
                         <span asp-validation-for="Amount" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <div class="form-floating">
                         <input asp-for="Date" class="form-control" type="datetime-local" />
-                        <label asp-for="Date">@localizer["Date"]</label>
+                        <label asp-for="Date">@Localizer["Date"]</label>
                         <span asp-validation-for="Date" class="text-danger"></span>
                     </div>
                 </div>
@@ -42,9 +43,9 @@
 
             <div class="form-floating mb-3">
                 <select asp-for="AccountId" asp-items="Model.Accounts" class="form-select">
-                    <option selected disabled>@localizer["SelectAccount"]</option>
+                    <option selected disabled>@Localizer["SelectAccount"]</option>
                 </select>
-                <label asp-for="AccountId">@sharedLocalizer["Account"]</label>
+                <label asp-for="AccountId">@SharedLocalizer["Account"]</label>
                 <span asp-validation-for="AccountId" class="text-danger"></span>
             </div>
 
@@ -52,14 +53,14 @@
             {
                 <div class="form-floating mb-3">
                     <select asp-for="CategoryId" class="form-select category-select">
-                        <option selected disabled>@localizer["SelectCategory"]</option>
+                        <option selected disabled>@Localizer["SelectCategory"]</option>
                         @foreach (var category in Model.ExpenseCategories)
                         {
                             <option value="@category.Value">@category.Text</option>
                         }
-                        <option value="create_new_category">@localizer["AddYourOwn"]</option>
+                        <option value="create_new_category">@Localizer["AddYourOwn"]</option>
                     </select>
-                    <label asp-for="CategoryId">@localizer["ExpenseCategory"]</label>
+                    <label asp-for="CategoryId">@Localizer["ExpenseCategory"]</label>
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
             }
@@ -67,30 +68,30 @@
             {
                 <div class="form-floating mb-3">
                     <select asp-for="CategoryId" asp-items="Model.IncomeCategories" class="form-select category-select">
-                        <option selected disabled>@localizer["SelectCategory"]</option>
+                        <option selected disabled>@Localizer["SelectCategory"]</option>
                         @foreach (var category in Model.IncomeCategories)
                         {
                             <option value="@category.Value">@category.Text</option>
                         }
-                        <option value="create_new_category">@localizer["AddYourOwn"]</option>
+                        <option value="create_new_category">@Localizer["AddYourOwn"]</option>
                     </select>
-                    <label asp-for="CategoryId">@localizer["IncomeCategory"]</label>
+                    <label asp-for="CategoryId">@Localizer["IncomeCategory"]</label>
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
             }
 
             <div class="form-floating mb-3">
                 <input asp-for="Tags" class="form-control" placeholder="e.g., groceries, urgent, project-alpha" />
-                <label asp-for="Tags">@localizer["Tags"]</label>
+                <label asp-for="Tags">@Localizer["Tags"]</label>
             </div>
 
             <div class="form-floating mb-3">
                 <textarea asp-for="Comment" class="form-control" style="height: 100px" placeholder="Add a comment..."></textarea>
-                <label asp-for="Comment">@localizer["Comment"]</label>
+                <label asp-for="Comment">@Localizer["Comment"]</label>
             </div>
 
             <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg">@localizer["SaveTransactionBtn"]</button>
+                <button type="submit" class="btn btn-primary btn-lg">@Localizer["SaveTransactionBtn"]</button>
             </div>
         </form>
     </div>

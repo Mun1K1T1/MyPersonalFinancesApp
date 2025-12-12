@@ -1,12 +1,14 @@
 ﻿@model FinanceManager.Models.CategoryCreateViewModel
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<CategoryEditPage> Localizer
+
 @{
-    var localizer = LocalizerFactory.Create("CategoryEditPage", "FinanceManager");
-    ViewData["Title"] = localizer["CreateTitle"];
+    ViewData["Title"] = Localizer["CreateTitle"];
 }
 
 <div class="mb-3">
     <a asp-area="Identity" asp-page="/Account/Manage/Categories" class="btn btn-link text-secondary text-decoration-none">
-        &lt; @localizer["BackToManage"]
+        &lt; @Localizer["BackToManage"]
     </a>
 </div>
 
@@ -20,17 +22,17 @@
 
             <div class="form-floating mb-3">
                 <input asp-for="Name" class="form-control" placeholder="Category Name" />
-                <label asp-for="Name">@localizer["CategoryName"]</label>
+                <label asp-for="Name">@Localizer["CategoryName"]</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Color" class="form-label">@localizer["CategoryColor"]</label>
+                <label asp-for="Color" class="form-label">@Localizer["CategoryColor"]</label>
                 <input asp-for="Color" type="color" class="form-control form-control-color" />
                 <span asp-validation-for="Color" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">@localizer["CreateCategoryBtn"]</button>
+            <button type="submit" class="btn btn-primary">@Localizer["CreateCategoryBtn"]</button>
         </form>
     </div>
 </div>

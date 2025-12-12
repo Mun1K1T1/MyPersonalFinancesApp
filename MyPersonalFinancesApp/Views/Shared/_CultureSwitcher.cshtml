@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Localization
 @using Microsoft.Extensions.Options
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<SharedStrings> SharedLocalizer
 
 @inject IOptions<RequestLocalizationOptions> LocOptions
 
@@ -14,7 +16,7 @@
 
 <div class="dropdown">
     <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="cultureDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        @requestCulture?.UICulture.NativeName
+        @SharedLocalizer["Language"]: @requestCulture?.UICulture.NativeName
     </button>
     <ul class="dropdown-menu" aria-labelledby="cultureDropdown">
         @foreach (var culture in cultureItems)

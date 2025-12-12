@@ -1,9 +1,16 @@
 ﻿@page
 @model EmailModel
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<EmailPage> Localizer
+
 @{
-    ViewData["Title"] = "Manage Email";
+    ViewData["Title"] = Localizer["Title"];
     ViewData["ActivePage"] = ManageNavPages.Email;
 }
+
+<div class="mb-3">
+    <a asp-page="./Security" class="btn btn-link text-secondary text-decoration-none">&lt; Back to Security Settings</a>
+</div>
 
 <h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
@@ -11,33 +18,30 @@
     <div class="col-md-6">
         <form id="email-form" method="post">
             <div asp-validation-summary="All" class="text-danger" role="alert"></div>
-
             <div class="form-group mb-3">
-                <label asp-for="Email" class="form-label"></label>
+                <label asp-for="Email" class="form-label">@Localizer["Email"]</label>
                 @if (Model.IsEmailConfirmed)
                 {
                     <div class="input-group">
                         <input asp-for="Email" class="form-control" disabled />
                         <div class="input-group-append">
-                            <span class="input-group-text text-success font-weight-bold h-100">✓ Confirmed</span>
+                            <span class="input-group-text text-success font-weight-bold h-100">@Localizer["Confirmed"]</span>
                         </div>
                     </div>
                 }
                 else
                 {
                     <input asp-for="Email" class="form-control" disabled />
-                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">Send verification email</button>
-                    <span class="badge bg-warning text-dark">Not Confirmed</span>
+                    <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link">@Localizer["SendVerification"]</button>
+                    <span class="badge bg-warning text-dark">@Localizer["NotConfirmed"]</span>
                 }
             </div>
-
             <div class="form-floating mb-3">
                 <input asp-for="Input.NewEmail" class="form-control" autocomplete="email" aria-required="true" placeholder="Please enter new email." />
-                <label asp-for="Input.NewEmail" class="form-label"></label>
+                <label asp-for="Input.NewEmail" class="form-label">@Localizer["NewEmail"]</label>
                 <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
             </div>
-
-            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="w-100 btn btn-lg btn-primary">Change email</button>
+            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="w-100 btn btn-lg btn-primary">@Localizer["ChangeEmailBtn"]</button>
         </form>
     </div>
 </div>

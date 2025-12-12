@@ -1,14 +1,23 @@
 ﻿@page
 @model CategoriesModel
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<CategoriesPage> Localizer
+@inject IStringLocalizer<SharedStrings> SharedLocalizer
+@inject IStringLocalizer<CategoriesDefault> CategoryLocalizer
+
 @{
-    var localizer = LocalizerFactory.Create("CategoriesPage", "FinanceManager");
-    var sharedLocalizer = LocalizerFactory.Create("SharedStrings", "FinanceManager");
-    ViewData["Title"] = localizer["Title"];
+    ViewData["Title"] = Localizer["Title"];
+
+    string LocalizeCategory(string categoryName)
+    {
+        if (string.IsNullOrEmpty(categoryName)) { return ""; }
+        var localized = CategoryLocalizer[categoryName.Replace(" ", "_")];
+        return localized.ResourceNotFound ? categoryName : localized;
+    }
 }
 
-<!-- Back Button -->
 <div class="mb-3">
-    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; @sharedLocalizer["BackToDashboard"]</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; @SharedLocalizer["BackToDashboard"]</a>
 </div>
 
 <h3>@ViewData["Title"]</h3>
@@ -18,29 +27,29 @@
     <!-- Expenses Column -->
     <div class="col-md-6">
         <div class="dashboard-box">
-            <h4 class="text-center">@localizer["ExpenseTitle"]</h4>
+            <h4 class="text-center">@Localizer["ExpenseTitle"]</h4>
             <table class="table">
-                <thead><tr><th>@localizer["ColName"]</th><th>@localizer["ColColor"]</th><th>@localizer["ColTransactions"]</th><th>@localizer["ColTotal"]</th><th></th></tr></thead>
+                <thead><tr><th>@Localizer["ColName"]</th><th>@Localizer["ColColor"]</th><th>@Localizer["ColTransactions"]</th><th>@Localizer["ColTotal"]</th><th></th></tr></thead>
                 <tbody>
                     @foreach (var cat in Model.ExpenseCategories)
                     {
                         <tr>
-                            <td>@cat.Name</td>
+                            <td>@LocalizeCategory(cat.Name)</td>
                             <td><input type="color" value="@cat.Color" disabled /></td>
                             <td>@cat.TransactionCount</td>
                             <td>@cat.TotalAmount.ToString("N2")</td>
                             <td>
                                 <form method="post" asp-page-handler="Delete" asp-route-id="@cat.Id" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">@localizer["DeleteBtn"]</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">@Localizer["DeleteBtn"]</button>
                                 </form>
-                                <a class="btn btn-sm btn-outline-secondary" asp-page="./Edit" asp-route-id="@cat.Id">@localizer["EditBtn"]</a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="./Edit" asp-route-id="@cat.Id">@Localizer["EditBtn"]</a>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
             <div class="text-end">
-                <a asp-controller="Category" asp-action="Create" asp-route-type="Expense" class="btn btn-primary">@localizer["NewBtn"]</a>
+                <a asp-controller="Category" asp-action="Create" asp-route-type="Expense" class="btn btn-primary">@Localizer["NewBtn"]</a>
             </div>
         </div>
     </div>
@@ -48,29 +57,29 @@
     <!-- Income Column -->
     <div class="col-md-6">
         <div class="dashboard-box">
-            <h4 class="text-center">@localizer["IncomeTitle"]</h4>
+            <h4 class="text-center">@Localizer["IncomeTitle"]</h4>
             <table class="table">
-                <thead><tr><th>@localizer["ColName"]</th><th>@localizer["ColColor"]</th><th>@localizer["ColTransactions"]</th><th>@localizer["ColTotal"]</th><th></th></tr></thead>
+                <thead><tr><th>@Localizer["ColName"]</th><th>@Localizer["ColColor"]</th><th>@Localizer["ColTransactions"]</th><th>@Localizer["ColTotal"]</th><th></th></tr></thead>
                 <tbody>
                     @foreach (var cat in Model.IncomeCategories)
                     {
                         <tr>
-                            <td>@cat.Name</td>
+                            <td>@LocalizeCategory(cat.Name)</td>
                             <td><input type="color" value="@cat.Color" disabled /></td>
                             <td>@cat.TransactionCount</td>
                             <td>@cat.TotalAmount.ToString("N2")</td>
                             <td>
                                 <form method="post" asp-page-handler="Delete" asp-route-id="@cat.Id" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">@localizer["DeleteBtn"]</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">@Localizer["DeleteBtn"]</button>
                                 </form>
-                                <a class="btn btn-sm btn-outline-secondary" asp-page="./Edit" asp-route-id="@cat.Id">@localizer["EditBtn"]</a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-page="./Edit" asp-route-id="@cat.Id">@Localizer["EditBtn"]</a>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
             <div class="text-end">
-                <a asp-controller="Category" asp-action="Create" asp-route-type="Income" class="btn btn-primary">@localizer["NewBtn"]</a>
+                <a asp-controller="Category" asp-action="Create" asp-route-type="Income" class="btn btn-primary">@Localizer["NewBtn"]</a>
             </div>
         </div>
     </div>

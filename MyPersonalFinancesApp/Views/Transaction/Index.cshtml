@@ -1,28 +1,30 @@
 ﻿@model IEnumerable<FinanceManager.Models.Transaction>
-@{
-    var localizer = LocalizerFactory.Create("HistoryPage", "FinanceManager");
-    var sharedLocalizer = LocalizerFactory.Create("SharedStrings", "FinanceManager");
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<HistoryPage> Localizer
+@inject IStringLocalizer<SharedStrings> SharedLocalizer
+@inject IStringLocalizer<CategoriesDefault> CategoryLocalizer
 
+@{
     var type = ViewData["TransactionType"] as string;
-    var typeString = type == "Income" ? sharedLocalizer["Income"].Value : sharedLocalizer["Expenses"].Value;
-    ViewData["Title"] = $"{typeString} {localizer["History"]}";
+    var typeString = type == "Income" ? SharedLocalizer["Income"].Value : SharedLocalizer["Expenses"].Value;
+    ViewData["Title"] = $"{typeString} {Localizer["History"]}";
+
+    string LocalizeCategory(string categoryName)
+    {
+        if (string.IsNullOrEmpty(categoryName)) { return ""; }
+        var localized = CategoryLocalizer[categoryName.Replace(" ", "_")];
+        return localized.ResourceNotFound ? categoryName : localized;
+    }
 
     string FormatCurrency(decimal amount, Currency currency)
     {
-        var symbol = currency switch
-        {
-            Currency.USD => "$",
-            Currency.EUR => "€",
-            Currency.UAH => "₴",
-            _ => ""
-        };
+        var symbol = currency switch { Currency.USD => "$", Currency.EUR => "€", Currency.UAH => "₴", _ => "" };
         return $"{symbol}{amount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)}";
     }
 }
 
-<!-- Back Button -->
 <div class="mb-3">
-    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; @sharedLocalizer["BackToDashboard"]</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; @SharedLocalizer["BackToDashboard"]</a>
 </div>
 
 <h1>@ViewData["Title"]</h1>
@@ -30,10 +32,10 @@
 <table class="table table-striped table-hover">
     <thead>
         <tr>
-            <th>@localizer["Date"]</th>
-            <th>@localizer["Category"]</th>
-            <th>@localizer["Account"]</th>
-            <th>@localizer["Amount"]</th>
+            <th>@Localizer["Date"]</th>
+            <th>@Localizer["Category"]</th>
+            <th>@Localizer["Account"]</th>
+            <th>@Localizer["Amount"]</th>
         </tr>
     </thead>
     <tbody>
@@ -41,7 +43,7 @@
         {
             <tr>
                 <td>@item.Date.ToString("g")</td>
-                <td>@item.Category.Name</td>
+                <td>@LocalizeCategory(item.Category.Name)</td>
                 <td>@item.Account.Name</td>
                 <td>@FormatCurrency(item.Amount, item.Account.Currency)</td>
             </tr>

@@ -1,39 +1,41 @@
 ﻿@model FinanceManager.Models.CreateAccountViewModel
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<FirstAccountPage> Localizer
+
 @{
-    var localizer = LocalizerFactory.Create("FirstAccountPage", "FinanceManager");
-    ViewData["Title"] = localizer["Title"];
+    ViewData["Title"] = Localizer["Title"];
 }
 
 <div class="row justify-content-center">
     <div class="col-md-6">
         <h1 class="text-center">@ViewData["Title"]</h1>
-        <h4 class="text-center text-muted">@localizer["Subtitle"]</h4>
+        <h4 class="text-center text-muted">@Localizer["Subtitle"]</h4>
         <hr />
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-floating mb-3">
                 <input asp-for="Name" class="form-control" placeholder="e.g., Main Bank Account" />
-                <label asp-for="Name">@localizer["AccountName"]</label>
+                <label asp-for="Name">@Localizer["AccountName"]</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-3">
                 <input asp-for="InitialBalance" class="form-control" value="0" />
-                <label asp-for="InitialBalance">@localizer["InitialBalance"]</label>
+                <label asp-for="InitialBalance">@Localizer["InitialBalance"]</label>
                 <span asp-validation-for="InitialBalance" class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-3">
                 <select asp-for="Currency" asp-items="Html.GetEnumSelectList<Currency>()" class="form-select">
-                    <option selected disabled>@localizer["SelectCurrency"]</option>
+                    <option selected disabled>@Localizer["SelectCurrency"]</option>
                 </select>
-                <label asp-for="Currency">@localizer["Currency"]</label>
+                <label asp-for="Currency">@Localizer["Currency"]</label>
                 <span asp-validation-for="Currency" class="text-danger"></span>
             </div>
 
             <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg">@localizer["FinishSetupBtn"]</button>
+                <button type="submit" class="btn btn-primary btn-lg">@Localizer["FinishSetupBtn"]</button>
             </div>
         </form>
     </div>

@@ -60,16 +60,11 @@ namespace FinanceManager.Areas.Identity.Pages.Account.Manage
 
             [Display(Name = "Patronymic")]
             public string Patronymic { get; set; }
-
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
             Username = userName;
 
@@ -105,17 +100,6 @@ namespace FinanceManager.Areas.Identity.Pages.Account.Manage
             {
                 await LoadAsync(user);
                 return Page();
-            }
-
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
-            {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
-                    return RedirectToPage();
-                }
             }
 
             if (Input.FirstName != user.FirstName)

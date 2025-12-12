@@ -1,21 +1,22 @@
 ﻿@page
 @model SecurityModel
+@using FinanceManager.Models.Resources
+@inject IStringLocalizer<SecurityPage> Localizer
+@inject IStringLocalizer<SharedStrings> SharedLocalizer
+
 @{
-    var localizer = LocalizerFactory.Create("SecurityPage", "FinanceManager");
-    var sharedLocalizer = LocalizerFactory.Create("SharedStrings", "FinanceManager");
-    ViewData["Title"] = localizer["Title"];
+    ViewData["Title"] = Localizer["Title"];
     ViewData["ActivePage"] = "Security";
 }
 
-<!-- Back Button -->
 <div class="mb-3">
-    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; @sharedLocalizer["BackToDashboard"]</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; @SharedLocalizer["BackToDashboard"]</a>
 </div>
 
 <h3>@ViewData["Title"]</h3>
 
 <div class="list-group">
-    <a asp-page="./Email" class="list-group-item list-group-item-action">@localizer["ManageEmail"]</a>
-    <a asp-page="./ChangePassword" class="list-group-item list-group-item-action">@localizer["ChangePassword"]</a>
-    <a asp-page="./TwoFactorAuthentication" class="list-group-item list-group-item-action">@localizer["TwoFactorAuth"]</a>
+    <a asp-page="./Email" class="list-group-item list-group-item-action">@Localizer["ManageEmail"]</a>
+    <a asp-page="./ChangePassword" class="list-group-item list-group-item-action">@Localizer["ChangePassword"]</a>
+    <a asp-page="./TwoFactorAuthentication" class="list-group-item list-group-item-action">@Localizer["TwoFactorAuth"]</a>
 </div>
