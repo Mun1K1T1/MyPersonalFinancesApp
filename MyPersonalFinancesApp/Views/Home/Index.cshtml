@@ -2,11 +2,22 @@
 @using System.Text.Json
 
 @{
-    // Створюємо екземпляри локалізаторів для цієї сторінки та для спільних рядків
     var homepageLocalizer = LocalizerFactory.Create("Homepage", "FinanceManager");
     var sharedLocalizer = LocalizerFactory.Create("SharedStrings", "FinanceManager");
-
     ViewData["Title"] = homepageLocalizer["Dashboard"];
+
+    string FormatCurrency(decimal amount, Currency currency)
+    {
+        var symbol = currency switch
+        {
+            Currency.USD => "$",
+            Currency.EUR => "€",
+            Currency.UAH => "₴",
+            _ => ""
+        };
+
+        return $"{symbol}{amount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)}";
+    }
 }
 
 <!-- MASTER FILTER FORM -->
@@ -37,12 +48,12 @@
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h5 class="text-muted">@homepageLocalizer["CurrentAmount"]</h5>
-                <h2>@Model.CurrentAmount.ToString("C")</h2>
+                <h2>@FormatCurrency(Model.CurrentAmount, Model.RecentExpenses.FirstOrDefault()?.Account.Currency ?? (Model.RecentIncomes.FirstOrDefault()?.Account.Currency ?? Currency.UAH))</h2>
             </div>
             <div class="col-md-4">
                 <div class="input-group">
                     <label class="input-group-text">@homepageLocalizer["Period"]:</label>
-                    <select name="selectedTimePeriod" asp-for="SelectedTimePeriod" asp-items="Html.GetEnumSelectList<TimePeriod>()" class="form-select" id="timePeriodSelect"></select>
+                    <select name="selectedTimePeriod" asp-for="SelectedTimePeriod" asp-items="Model.TimePeriods" class="form-select" id="timePeriodSelect"></select>
                 </div>
             </div>
         </div>
@@ -69,7 +80,7 @@
                     {
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div><strong>@expense.Category.Name</strong><small class="d-block text-muted">@expense.Date.ToShortDateString()</small></div>
-                            <span class="badge bg-danger rounded-pill">-@expense.Amount.ToString("C")</span>
+                            <span class="badge bg-danger rounded-pill">-@FormatCurrency(expense.Amount, expense.Account.Currency)</span>
                         </li>
                     }
                 </ul>
@@ -106,7 +117,7 @@
                     {
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div><strong>@income.Category.Name</strong><small class="d-block text-muted">@income.Date.ToShortDateString()</small></div>
-                            <span class="badge bg-success rounded-pill">+@income.Amount.ToString("C")</span>
+                            <span class="badge bg-success rounded-pill">+@FormatCurrency(income.Amount, income.Account.Currency)</span>
                         </li>
                     }
                 </ul>

@@ -1,15 +1,18 @@
 using FinanceManager.Data;
 using FinanceManager.Models;
+using FinanceManager.Models.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Localization;
 
 namespace FinanceManager.Controllers
 {
@@ -18,25 +21,34 @@ namespace FinanceManager.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IStringLocalizer<Enums> _enumsLocalizer;
 
-        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IStringLocalizer<Enums> enumsLocalizer)
         {
             _context = context;
             _userManager = userManager;
+            _enumsLocalizer = enumsLocalizer;
         }
 
-        public async Task<IActionResult> Index(int? accountId, TimePeriod selectedTimePeriod = TimePeriod.AllTime)
+        public async Task<IActionResult> Index(int? accountId, string selectedTimePeriod = "AllTime")
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userAccounts = await _context.Accounts
                 .Where(a => a.ApplicationUserId == userId && a.IsActive)
                 .ToListAsync();
 
+            var timePeriodItems = Enum.GetValues<TimePeriod>()
+        .Select(tp => new SelectListItem
+        {
+            Value = tp.ToString(),
+            Text = _enumsLocalizer[$"TimePeriod_{tp.ToString()}"]
+        }).ToList();
+
             var viewModel = new DashboardViewModel
             {
                 SelectedAccountId = accountId,
-                Accounts = new SelectList(userAccounts, "Id", "Name", accountId),
-                SelectedTimePeriod = selectedTimePeriod // The received value
+                TimePeriods = new SelectList(timePeriodItems, "Value", "Text", selectedTimePeriod),
+                SelectedTimePeriod = selectedTimePeriod
             };
 
             // --- CURRENT AMOUNT CALCULATION ---
@@ -57,8 +69,9 @@ namespace FinanceManager.Controllers
                 filteredQuery = filteredQuery.Where(t => t.AccountId == accountId.Value);
             }
 
+            Enum.TryParse<TimePeriod>(selectedTimePeriod, out var timePeriodEnum);
             DateTime startDate = DateTime.MinValue;
-            switch (selectedTimePeriod)
+            switch (timePeriodEnum)
             {
                 case TimePeriod.Day:
                     startDate = DateTime.Today;
@@ -74,7 +87,7 @@ namespace FinanceManager.Controllers
                     break;
             }
 
-            if (selectedTimePeriod != TimePeriod.AllTime)
+            if (timePeriodEnum != TimePeriod.AllTime)
             {
                 filteredQuery = filteredQuery.Where(t => t.Date >= startDate);
             }
@@ -85,12 +98,14 @@ namespace FinanceManager.Controllers
 
             viewModel.RecentIncomes = await filteredQuery.OfType<Income>()
                 .Include(i => i.Category)
+                .Include(i => i.Account)
                 .OrderByDescending(i => i.Date)
                 .Take(20)
                 .ToListAsync();
 
             viewModel.RecentExpenses = await filteredQuery.OfType<Expense>()
                 .Include(e => e.Category)
+                .Include(i => i.Account)
                 .OrderByDescending(e => e.Date)
                 .Take(20)
                 .ToListAsync();
@@ -131,16 +146,16 @@ namespace FinanceManager.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpPost]
-        public IActionResult SetCulture(string culture, string returnUrl)
-        {
-            Response.Cookies.Append(
-                CookieRequestCultureProvider.DefaultCookieName,
-                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
-            );
+        //[HttpPost]
+        //public IActionResult SetCulture(string culture, string returnUrl)
+        //{
+        //    Response.Cookies.Append(
+        //        CookieRequestCultureProvider.DefaultCookieName,
+        //        CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+        //        new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+        //    );
 
-            return LocalRedirect(returnUrl);
-        }
+        //    return LocalRedirect(returnUrl);
+        //}
     }
 }

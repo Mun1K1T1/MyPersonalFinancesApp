@@ -28,7 +28,7 @@
                             <td>@cat.Name</td>
                             <td><input type="color" value="@cat.Color" disabled /></td>
                             <td>@cat.TransactionCount</td>
-                            <td>@cat.TotalAmount.ToString("C")</td>
+                            <td>@cat.TotalAmount.ToString("N2")</td>
                             <td>
                                 <form method="post" asp-page-handler="Delete" asp-route-id="@cat.Id" class="d-inline">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">@localizer["DeleteBtn"]</button>
@@ -58,7 +58,7 @@
                             <td>@cat.Name</td>
                             <td><input type="color" value="@cat.Color" disabled /></td>
                             <td>@cat.TransactionCount</td>
-                            <td>@cat.TotalAmount.ToString("C")</td>
+                            <td>@cat.TotalAmount.ToString("N2")</td>
                             <td>
                                 <form method="post" asp-page-handler="Delete" asp-route-id="@cat.Id" class="d-inline">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">@localizer["DeleteBtn"]</button>

@@ -6,6 +6,18 @@
     var type = ViewData["TransactionType"] as string;
     var typeString = type == "Income" ? sharedLocalizer["Income"].Value : sharedLocalizer["Expenses"].Value;
     ViewData["Title"] = $"{typeString} {localizer["History"]}";
+
+    string FormatCurrency(decimal amount, Currency currency)
+    {
+        var symbol = currency switch
+        {
+            Currency.USD => "$",
+            Currency.EUR => "€",
+            Currency.UAH => "₴",
+            _ => ""
+        };
+        return $"{symbol}{amount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)}";
+    }
 }
 
 <!-- Back Button -->
@@ -31,7 +43,7 @@
                 <td>@item.Date.ToString("g")</td>
                 <td>@item.Category.Name</td>
                 <td>@item.Account.Name</td>
-                <td>@item.Amount.ToString("C")</td>
+                <td>@FormatCurrency(item.Amount, item.Account.Currency)</td>
             </tr>
         }
     </tbody>

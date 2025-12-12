@@ -1,13 +1,14 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using FinanceManager.Data;
-using FinanceManager.Models;
 using FinanceManager.Filters;
+using FinanceManager.Models;
+using FinanceManager.Models.Resources;
 using FinanceManager.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,12 +27,15 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add<EnsureUserHasAccountFilter>();
 })
 .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
-.AddDataAnnotationsLocalization(); ;
+.AddDataAnnotationsLocalization(options => {
+    options.DataAnnotationLocalizerProvider = (type, factory) =>
+        factory.Create(typeof(Enums));
+});
 
 builder.Services.AddHostedService<RegularPaymentProcessor>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-builder.Services.AddLocalization(options => options.ResourcesPath = "Models/Resources");
+builder.Services.AddLocalization();
 
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {

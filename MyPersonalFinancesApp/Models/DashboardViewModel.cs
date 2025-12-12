@@ -12,7 +12,7 @@ namespace FinanceManager.Models
         AllTime
     }
 
-    // A simple class to hold data for our charts
+    // Class to hold data charts
     public class ChartData
     {
         public List<string> Labels { get; set; } = new List<string>();
@@ -25,10 +25,9 @@ namespace FinanceManager.Models
         // For the account filter dropdown
         public int? SelectedAccountId { get; set; }
         public SelectList? Accounts { get; set; }
-
+        public SelectList? TimePeriods { get; set; }
         public decimal CurrentAmount { get; set; }
-        public TimePeriod SelectedTimePeriod { get; set; } = TimePeriod.AllTime; // Default to AllTime
-
+        public string SelectedTimePeriod { get; set; }
         // Lists for the 20 recent transactions
         public List<Income> RecentIncomes { get; set; } = new List<Income>();
         public List<Expense> RecentExpenses { get; set; } = new List<Expense>();

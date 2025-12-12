@@ -22,7 +22,7 @@
             if (culture.Value != requestCulture?.UICulture.Name)
             {
                 <li>
-                    <form asp-controller="Home" asp-action="SetCulture" asp-route-returnUrl="@returnUrl" method="post">
+                    <form asp-controller="Culture" asp-action="SetCulture" asp-route-returnUrl="@returnUrl" method="post">
                         <input type="hidden" name="culture" value="@culture.Value" />
                         <button type="submit" class="dropdown-item">@culture.Text</button>
                     </form>

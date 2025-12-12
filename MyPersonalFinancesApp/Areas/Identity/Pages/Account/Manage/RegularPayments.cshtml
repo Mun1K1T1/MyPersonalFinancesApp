@@ -2,6 +2,18 @@
 @model RegularPaymentsModel
 @{
     ViewData["Title"] = "Regular Payments";
+
+    string FormatCurrency(decimal amount, Currency currency)
+    {
+        var symbol = currency switch
+        {
+            Currency.USD => "$",
+            Currency.EUR => "€",
+            Currency.UAH => "₴",
+            _ => ""
+        };
+        return $"{symbol}{amount.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)}";
+    }
 }
 
 <!-- Back Button -->
@@ -35,7 +47,7 @@
                     <td>@p.Name <br /><small class="text-muted">@p.Account.Name / @p.Category.Name</small></td>
                     <td>@p.NextRunDate.ToString("g")</td>
                     <td class="@(p.Type == CategoryType.Income ? "text-success" : "text-danger")">
-                        <strong>@(p.Type == CategoryType.Income ? "+" : "-")@p.Amount.ToString("C")</strong>
+                        <strong>@(p.Type == CategoryType.Income ? "+" : "-")@FormatCurrency(p.Amount, p.Account.Currency)</strong>
                     </td>
                     <td>Every @p.Interval @p.FrequencyUnit.ToString()s</td>
                     <td>
