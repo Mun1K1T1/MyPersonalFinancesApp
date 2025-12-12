@@ -1,11 +1,12 @@
 ﻿@model FinanceManager.Models.CategoryCreateViewModel
 @{
-    ViewData["Title"] = "Create New Category";
+    var localizer = LocalizerFactory.Create("CategoryEditPage", "FinanceManager");
+    ViewData["Title"] = localizer["CreateTitle"];
 }
 
 <div class="mb-3">
     <a asp-area="Identity" asp-page="/Account/Manage/Categories" class="btn btn-link text-secondary text-decoration-none">
-        &lt; Back to Manage Categories
+        &lt; @localizer["BackToManage"]
     </a>
 </div>
 
@@ -19,17 +20,17 @@
 
             <div class="form-floating mb-3">
                 <input asp-for="Name" class="form-control" placeholder="Category Name" />
-                <label asp-for="Name"></label>
+                <label asp-for="Name">@localizer["CategoryName"]</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Color" class="form-label"></label>
+                <label asp-for="Color" class="form-label">@localizer["CategoryColor"]</label>
                 <input asp-for="Color" type="color" class="form-control form-control-color" />
                 <span asp-validation-for="Color" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Create Category</button>
+            <button type="submit" class="btn btn-primary">@localizer["CreateCategoryBtn"]</button>
         </form>
     </div>
 </div>

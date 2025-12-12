@@ -3,7 +3,6 @@
     var localizer = LocalizerFactory.Create("CreateTransactionPage", "FinanceManager");
     var sharedLocalizer = LocalizerFactory.Create("SharedStrings", "FinanceManager");
 
-    // Динамічний заголовок в залежності від типу транзакції
     var transactionTypeString = Model.TransactionType == "Expense" ? sharedLocalizer["Expenses"].Value.ToLower() : sharedLocalizer["Income"].Value.ToLower();
     ViewData["Title"] = localizer.GetString("Create") + " " + transactionTypeString;
 }

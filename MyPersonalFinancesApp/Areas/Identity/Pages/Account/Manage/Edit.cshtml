@@ -1,12 +1,13 @@
 ﻿@page "{id:int}"
 @model EditModel
 @{
-    ViewData["Title"] = "Edit Category";
+    var localizer = LocalizerFactory.Create("CategoryEditPage", "FinanceManager");
+    ViewData["Title"] = localizer["EditTitle"];
 }
 
 <!-- Back Button -->
 <div class="mb-3">
-    <a asp-page="./Categories" class="btn btn-link text-secondary text-decoration-none">&lt; Back to Manage Categories</a>
+    <a asp-page="./Categories" class="btn btn-link text-secondary text-decoration-none">&lt; @localizer["BackToManage"]</a>
 </div>
 
 <h3>@ViewData["Title"]</h3>
@@ -19,17 +20,17 @@
 
             <div class="form-floating mb-3">
                 <input asp-for="Input.Name" class="form-control" />
-                <label asp-for="Input.Name"></label>
+                <label asp-for="Input.Name">@localizer["CategoryName"]</label>
                 <span asp-validation-for="Input.Name" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Input.Color" class="form-label"></label>
+                <label asp-for="Input.Color" class="form-label">@localizer["CategoryColor"]</label>
                 <input asp-for="Input.Color" type="color" class="form-control form-control-color" />
                 <span asp-validation-for="Input.Color" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="submit" class="btn btn-primary">@localizer["SaveChangesBtn"]</button>
         </form>
     </div>
 </div>

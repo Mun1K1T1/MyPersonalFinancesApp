@@ -1,13 +1,15 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Profile";
+    var localizer = LocalizerFactory.Create("ProfilePage", "FinanceManager");
+    var sharedLocalizer = LocalizerFactory.Create("SharedStrings", "FinanceManager");
+    ViewData["Title"] = localizer["Profile"];
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
 <!-- Back Button -->
 <div class="mb-3">
-    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; Back to Dashboard</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link text-secondary text-decoration-none">&lt; @sharedLocalizer["BackToDashboard"]</a>
 </div>
 
 <h3>@ViewData["Title"]</h3>
@@ -18,25 +20,25 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-floating mb-3">
                 <input asp-for="Username" class="form-control" disabled />
-                <label asp-for="Username" class="form-label"></label>
+                <label asp-for="Username" class="form-label">@localizer["Username"]</label>
             </div>
 
             <hr />
-            <h5>Personal Information</h5>
+            <h5>@localizer["PersonalInfo"]</h5>
 
             <div class="form-floating mb-3">
                 <input asp-for="Input.FirstName" class="form-control" />
-                <label asp-for="Input.FirstName" class="form-label"></label>
+                <label asp-for="Input.FirstName" class="form-label">@localizer["FirstName"]</label>
             </div>
             <div class="form-floating mb-3">
                 <input asp-for="Input.LastName" class="form-control" />
-                <label asp-for="Input.LastName" class="form-label"></label>
+                <label asp-for="Input.LastName" class="form-label">@localizer["LastName"]</label>
             </div>
             <div class="form-floating mb-3">
                 <input asp-for="Input.Patronymic" class="form-control" />
-                <label asp-for="Input.Patronymic" class="form-label"></label>
+                <label asp-for="Input.Patronymic" class="form-label">@localizer["Patronymic"]</label>
             </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">@localizer["Save"]</button>
         </form>
     </div>
 </div>
