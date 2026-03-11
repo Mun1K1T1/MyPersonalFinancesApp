@@ -3,20 +3,16 @@ using FinanceManager.Models;
 using FinanceManager.Models.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
-using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace FinanceManager.Controllers
 {
-    [Authorize] // Require user to be logged in to see the dashboard
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -46,6 +42,7 @@ namespace FinanceManager.Controllers
 
             var viewModel = new DashboardViewModel
             {
+                Accounts = new SelectList(userAccounts, "Id", "Name", accountId),
                 SelectedAccountId = accountId,
                 TimePeriods = new SelectList(timePeriodItems, "Value", "Text", selectedTimePeriod),
                 SelectedTimePeriod = selectedTimePeriod
@@ -145,17 +142,5 @@ namespace FinanceManager.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-        //[HttpPost]
-        //public IActionResult SetCulture(string culture, string returnUrl)
-        //{
-        //    Response.Cookies.Append(
-        //        CookieRequestCultureProvider.DefaultCookieName,
-        //        CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-        //        new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
-        //    );
-
-        //    return LocalRedirect(returnUrl);
-        //}
     }
 }
