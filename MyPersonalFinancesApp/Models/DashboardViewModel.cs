@@ -38,5 +38,6 @@ namespace FinanceManager.Models
         // Data for the pie charts
         public ChartData IncomeChartData { get; set; } = new ChartData();
         public ChartData ExpenseChartData { get; set; } = new ChartData();
+        public Dictionary<string, string> LocalizedTexts { get; set; } = new Dictionary<string, string>();
     }
 }

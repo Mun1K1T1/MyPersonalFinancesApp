@@ -1,4 +1,5 @@
 using FinanceManager.Data;
+using FinanceManager.Helpers;
 using FinanceManager.Models;
 using FinanceManager.Models.Resources;
 using Microsoft.AspNetCore.Authorization;
@@ -18,12 +19,14 @@ namespace FinanceManager.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IStringLocalizer<Enums> _enumsLocalizer;
+        private readonly IStringLocalizer<Homepage> _homepageLocalizer;
 
-        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IStringLocalizer<Enums> enumsLocalizer)
+        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IStringLocalizer<Enums> enumsLocalizer, IStringLocalizer<Homepage> homepageLocalizer)
         {
             _context = context;
             _userManager = userManager;
             _enumsLocalizer = enumsLocalizer;
+            _homepageLocalizer = homepageLocalizer;
         }
 
         public async Task<IActionResult> Index(int? accountId, string selectedTimePeriod = "AllTime")
@@ -47,6 +50,10 @@ namespace FinanceManager.Controllers
                 TimePeriods = new SelectList(timePeriodItems, "Value", "Text", selectedTimePeriod),
                 SelectedTimePeriod = selectedTimePeriod
             };
+            viewModel.LocalizedTexts = LocalizationHelper.GenerateLocalizedStringsDictionary(
+                typeof(DashboardKeys),
+                _homepageLocalizer
+            );
 
             // --- CURRENT AMOUNT CALCULATION ---
             IQueryable<Transaction> balanceQuery = _context.Transactions.Where(t => t.Account.ApplicationUserId == userId);
